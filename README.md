@@ -4,20 +4,21 @@
 ## Thesis title: Localand nonlocal differential conductance spectroscopy of Andreev bound states in three-terminal superconducting devices 
 
 
-### Chapter 3:
+### Chapter 3
 #### Figure 3.9: 
-	Run the script "ABCD_plot.py".
+	Run the script "Source_code/Single_Andreev_level_analytical/ABCD_plot.py".
 
 
 
 
 
-### Chapter 7:
+### Chapter 7
 #### Figure 7.3:
 To plot already generated data for the symmetric and the antisymmetric decives : 
-				Run "Examples/2D_platform_plot.py"
+		
+		Run : 		Examples/2D_platform_plot.py
 	 	
-		Output:		Two energy vs. E_Z plots, one for the symmetric, another for the asymmetric device.
+		Output :	Two energy vs. E_Z plots, one for the symmetric, another for the asymmetric device.
 				Filenames:
 					EvsEz_Sym_<date-of-today>_260_160_0.8_0_250_1000_1000_4000_8.65385_25_0_'alphabar'_0.18_0_0
 					EvsEz_Asym_<date-of-today>_260_160_0.8_0_250_1000_1000_4000_8.65385_25_0_'alphabar'_0.18_0_0
@@ -46,7 +47,8 @@ To plot already generated data for the symmetric and the antisymmetric decives :
 		
 
 To generate the data from scratch : 
-				Run "Source_code/Hell_2D_platform_paper/2D_platform_diagonalization.py"
+	
+		Run : 		Source_code/Hell_2D_platform_paper/2D_platform_diagonalization.py
 		
 		Output : 	Looping over the symmetric and asymmetric device, it will show and save a plot when the diagonalization of each one is done.
 
@@ -69,10 +71,11 @@ To generate the data from scratch :
 			
 
 
-### Chapter 8 and 9
+### Chapters 8 and 9
 #### Equations (8.26)-(8.29) :
 Run the Mathematica stript
-		"Source_code/Single_Andreev_level_analytical/S-matrix_one-level_approximation_web.nb"
+	
+	"Source_code/Single_Andreev_level_analytical/S-matrix_one-level_approximation_web.nb"
 
 #### Figures : 
 ####		8.3 - Nonlocal antisymmetric differential conductance, N = 800 sites
