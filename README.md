@@ -14,7 +14,7 @@
 
 ### Chapter 7:
 #### Figure 7.3:
-	 ##### To plot already generated data for the symmetric and the antisymmetric decives : 
+To plot already generated data for the symmetric and the antisymmetric decives : 
 				Run "Examples/2D_platform_plot.py"
 	 	
 		Output:		Two energy vs. E_Z plots, one for the symmetric, another for the asymmetric device.
@@ -45,7 +45,7 @@
 					where m_e = electron mass [meV/c^2]
 		
 
-	##### To generate the data from scratch : 
+To generate the data from scratch : 
 				Run "Source_code/Hell_2D_platform_paper/2D_platform_diagonalization.py"
 		
 		Output : 	Looping over the symmetric and asymmetric device, it will show and save a plot when the diagonalization of each one is done.
@@ -67,3 +67,15 @@
 		
 		
 			
+
+
+### Chapter 8
+#### Equations (8.26)-(8.29) :
+Run the Mathematica stript
+		"Source_code/Single_Andreev_level_analytical/S-matrix_one-level_approximation_web.nb"
+
+#### Figure 8.3 - Non-local antisymmetric differential conductance
+The code used to generate the data was adapted from a package written by Esben Bork Hansen.
+This whole package will not be uploaded here. In the future, Esben plans to make the package public.
+Please see his PhD thesis for further details about the kinds of calculations he has performed with his code.
+
