@@ -5,11 +5,22 @@
 
 
 ### Chapter 3
-#### Figure 3.9: 
-	Run the script "Source_code/Single_Andreev_level_analytical/ABCD_plot.py".
+#### Figures 3.9 and 3.10: 
+	Run the script 
+		
+		Source_code/Single_Andreev_level_analytical/ABCD_plot.py
 
 
 
+### Chapter 6
+#### Figure 6.6:
+	Majorana wire eigenenergies plot : Run the script
+
+		Examples/Majorana_wire.py
+
+	Differential conductance plot : Run the script
+
+		Examples/NS_boundary_dIdV_Zbarriers.py	
 
 
 ### Chapter 7
