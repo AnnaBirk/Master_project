@@ -69,13 +69,31 @@ To generate the data from scratch :
 			
 
 
-### Chapter 8
+### Chapter 8 and 9
 #### Equations (8.26)-(8.29) :
 Run the Mathematica stript
 		"Source_code/Single_Andreev_level_analytical/S-matrix_one-level_approximation_web.nb"
 
-#### Figure 8.3 - Non-local antisymmetric differential conductance
+#### Figures 	8.3 - Nonlocal antisymmetric differential conductance, N = 800 sites
+####		8.4 - Nonlocal antisymmetric and symmetric conductances, traced along one of the two lowest eigenenergies from diagonalizing the closed system, N = 800 sites
+####		9.2 - Probability density versus lambda = (chemical potential, or magnetic field), and site number (real space), N = 200 (length same as above, namely 1500 nm)
+####		9.3 - Spin polarization versus lambda, and site number, N = 200 sites
+#### 		9.4 - BCS charge versus lambda, and site number, N = 200 sites
+
 The code used to generate the data was adapted from a package written by Esben Bork Hansen.
 This whole package will not be uploaded here. In the future, Esben plans to make the package public.
 Please see his PhD thesis for further details about the kinds of calculations he has performed with his code.
+
+The data used in the thesis are given in : 
+		"Source_code/Three-terminal_selfenergy_method/figures/thesis_plots_Anna/data/wire_101"
+
+One library I wrote, which is used to process the raw data (differential conductances), and to represent the data as done in the figures at hand, is given in : 
+		"Source_code/Three-terminal_selfenergy_method/thesis_plot_library/thesis_plot_library.py"
+
+Arrays containing the effective topological gap, plotted in figure 9.2, is given in :
+		"Source_code/Three-terminal_selfenergy_method/Anna\ thesis\ plots/Dtop_mu_1.npz"
+		"Source_code/Three-terminal_selfenergy_method/Anna\ thesis\ plots/Dtop_b_1.npz"
+versus the chemical potential and the magnetic field, respectively.
+
+
 
