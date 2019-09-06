@@ -84,16 +84,20 @@ The code used to generate the data was adapted from a package written by Esben B
 This whole package will not be uploaded here. In the future, Esben plans to make the package public.
 Please see his PhD thesis for further details about the kinds of calculations he has performed with his code.
 
-The data used in the thesis are given in : 
-		"Source_code/Three-terminal_selfenergy_method/figures/thesis_plots_Anna/data/wire_101"
+To generate these figures, run the script : 
+		Source_code/Three-terminal_selfenergy_method/figures/thesis_plots_Anna/Three-terminal_selfenergy_method_plots.py
 
-One library I wrote, which is used to process the raw data (differential conductances), and to represent the data as done in the figures at hand, is given in : 
-		"Source_code/Three-terminal_selfenergy_method/thesis_plot_library/thesis_plot_library.py"
+This script makes use of the following library and data : 
+	The data used in the thesis are given in : 
+			"Source_code/Three-terminal_selfenergy_method/figures/thesis_plots_Anna/data/wire_101"
 
-Arrays containing the effective topological gap, plotted in figure 9.2, is given in :
-		"Source_code/Three-terminal_selfenergy_method/Anna\ thesis\ plots/Dtop_mu_1.npz"
-		"Source_code/Three-terminal_selfenergy_method/Anna\ thesis\ plots/Dtop_b_1.npz"
-versus the chemical potential and the magnetic field, respectively.
+	One library I wrote, which is used to process the raw data (differential conductances), and to represent the data as done in the figures at hand, is given in : 
+			"Source_code/Three-terminal_selfenergy_method/thesis_plot_library/thesis_plot_library.py"
+
+	Arrays containing the effective topological gap, plotted in figure 9.2, is given in :
+			"Source_code/Three-terminal_selfenergy_method/Anna\ thesis\ plots/Dtop_mu_1.npz"
+			"Source_code/Three-terminal_selfenergy_method/Anna\ thesis\ plots/Dtop_b_1.npz"
+	versus the chemical potential and the magnetic field, respectively.
 
 
 
