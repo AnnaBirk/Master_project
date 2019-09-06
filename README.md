@@ -6,4 +6,64 @@
 
 ### Chapter 3:
 #### Figure 3.9: 
-	Run the script "ABCD.py".
+	Run the script "ABCD_plot.py".
+
+
+
+
+
+### Chapter 7:
+#### Figure 7.3:
+	 ##### To plot already generated data for the symmetric and the antisymmetric decives : 
+				Run "Examples/2D_platform_plot.py"
+	 	
+		Output:		Two energy vs. E_Z plots, one for the symmetric, another for the asymmetric device.
+				Filenames:
+					EvsEz_Sym_<date-of-today>_260_160_0.8_0_250_1000_1000_4000_8.65385_25_0_'alphabar'_0.18_0_0
+					EvsEz_Asym_<date-of-today>_260_160_0.8_0_250_1000_1000_4000_8.65385_25_0_'alphabar'_0.18_0_0
+		
+		These two output plots are also given in the folder
+				"Examples"
+		with the filenames
+				"EvsEz_Asym_2019-09-06_260_160_0.8_0_250_1000_1000_4000_8.65385_25_0_'alphabar'_0.18_0_0.pdf"
+				"EvsEz_Sym_2019-09-06_260_160_0.8_0_250_1000_1000_4000_8.65385_25_0_'alphabar'_0.18_0_0.pdf"
+				
+		This data has the same parameters as used in the analysis in chapter 7. :
+				chemical potential = 0 meV
+				superconducting phases in left and right 2D layers = 0
+				lattice spacing in x-direction, a_x = 9 nm
+				lattice spacing in y-direction, a_y = 25 cm
+				magnetic field, E_Z = range(0,0.8,80) (a higher resolution was used in figure 7.3)
+				Length in middle = 250 nm
+				Length on left / right sides = 1000 nm
+				Length in y-direction = 4000 nm
+				alpha_R (Rashba spin-orbit strength) 	= 0.28 eV Å
+									= 1.42*10^(-4)*c*hbar
+					where 	c = speed of light [nm/s]
+						hbar = reduced Planck constant [meV*s]
+				effective mass, m_star = 0.023*m_e
+					where m_e = electron mass [meV/c^2]
+		
+
+	##### To generate the data from scratch : 
+				Run "Source_code/Hell_2D_platform_paper/2D_platform_diagonalization.py"
+		
+		Output : 	Looping over the symmetric and asymmetric device, it will show and save a plot when the diagonalization of each one is done.
+
+		To change the resolution/values of fields, E_Z, looped over:
+				change line 192 in the function "main()".
+		
+		To change the system parameters : 
+				change the "par" object. The essential parameters are given in
+					line 226
+				where "par" is initially defined.
+				
+				the effective mass of the superconductor, m_star, is defined in 
+					line 238.
+
+		To change the system aspect ratio : 
+				change line 234. The number dividing "par.Nx" gives the aspect ratio
+					aspect_ratio = par.Nx/par.Ny.
+		
+		
+			
