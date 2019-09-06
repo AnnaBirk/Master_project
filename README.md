@@ -74,7 +74,8 @@ To generate the data from scratch :
 Run the Mathematica stript
 		"Source_code/Single_Andreev_level_analytical/S-matrix_one-level_approximation_web.nb"
 
-#### Figures 	8.3 - Nonlocal antisymmetric differential conductance, N = 800 sites
+#### Figures : 
+####		8.3 - Nonlocal antisymmetric differential conductance, N = 800 sites
 ####		8.4 - Nonlocal antisymmetric and symmetric conductances, traced along one of the two lowest eigenenergies from diagonalizing the closed system, N = 800 sites
 ####		9.2 - Probability density versus lambda = (chemical potential, or magnetic field), and site number (real space), N = 200 (length same as above, namely 1500 nm)
 ####		9.3 - Spin polarization versus lambda, and site number, N = 200 sites
@@ -85,18 +86,24 @@ This whole package will not be uploaded here. In the future, Esben plans to make
 Please see his PhD thesis for further details about the kinds of calculations he has performed with his code.
 
 To generate these figures, run the script : 
-		Source_code/Three-terminal_selfenergy_method/figures/thesis_plots_Anna/Three-terminal_selfenergy_method_plots.py
+
+	Source_code/Three-terminal_selfenergy_method/figures/thesis_plots_Anna/Three-terminal_selfenergy_method_plots.py
 
 This script makes use of the following library and data : 
+	
 	The data used in the thesis are given in : 
+
 			"Source_code/Three-terminal_selfenergy_method/figures/thesis_plots_Anna/data/wire_101"
 
 	One library I wrote, which is used to process the raw data (differential conductances), and to represent the data as done in the figures at hand, is given in : 
+
 			"Source_code/Three-terminal_selfenergy_method/thesis_plot_library/thesis_plot_library.py"
 
 	Arrays containing the effective topological gap, plotted in figure 9.2, is given in :
+
 			"Source_code/Three-terminal_selfenergy_method/Anna\ thesis\ plots/Dtop_mu_1.npz"
 			"Source_code/Three-terminal_selfenergy_method/Anna\ thesis\ plots/Dtop_b_1.npz"
+
 	versus the chemical potential and the magnetic field, respectively.
 
 
