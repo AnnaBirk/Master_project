@@ -126,12 +126,16 @@ This script makes use of the following library and data :
 ####            8.5 - Line-cut of the in-gap conductance calculated for the same system as in the main results, but now using Kwant. 
 
 The discretization is chosen differently, partially due to computational cost, but also because the point in this figure was to demonstrate
+
 	G_LR^asym(V) = G_LL^asym(V)
+
 which should be independent of the validity of the tight-binding approximation.
 Discretization parameters used :  
+
 	N = 60 sites, Length=1500 nm, inter-site distance = 25 nm.
 
 To plot the figure from already generated data, run the script :
+
 	Source_code/Three-terminal_Kwant_method/expsys_v16_webv02.py
 
 This script generates several figures:
