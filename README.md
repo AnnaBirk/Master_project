@@ -136,9 +136,8 @@ To plot the figure from already generated data, run the script :
 
 This script generates several figures:
 
-	N-SC_sys.pdf			 - a plot of the graph for the system
-	energies_mu_Nx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1_.pdf
-					 - the eigenenergies versus the chemical potential
+	N-SC_sys.pdf			 
+					 - a plot of the graph for the system
 	G_11_vsEbias1mu_Nx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1__SymLogNorm.pdf
 					 - local total conductance
 	G_12_vsEbias1mu_Nx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1__SymLogNorm.pdf
@@ -156,14 +155,6 @@ This script generates several figures:
 	G_11_12_A_S_mu_0_vs_bias.pdf
 					 - line-cut of the symmetry-decomposed local and nonlocal differential conductances. Zooming in around zero bias in this plot, you get figure 8.5.
 
-			
-The corresponding arrays containing the data for the energies is :
-
-	Evsmu_Nx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1_.npy
-
-The eigenvectors are given in :
-
-	Eigenvectorsvsmu_Nx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1_.npy
 
 The corresponding arrays containing the data for the conductances :
 
