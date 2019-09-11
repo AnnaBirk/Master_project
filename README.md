@@ -132,7 +132,7 @@ Discretization parameters used :
 	N = 60 sites, Length=1500 nm, inter-site distance = 25 nm.
 
 To plot the figure from already generated data, run the script :
-	Source_code/Three-terminal_Kwant_method/expsys_v16_webv01.py
+	Source_code/Three-terminal_Kwant_method/expsys_v16_webv02.py
 
 This script generates several figures:
 
