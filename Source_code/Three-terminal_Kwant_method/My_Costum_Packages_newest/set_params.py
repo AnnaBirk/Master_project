@@ -20,7 +20,7 @@ ppar : 			Simplenamespace object containing program specific parameters.
 
 				  - generating_g012a : 	
 
-				 - make_N_wire : 		Boolean. If defined as instance of ppar and given as True, make.make_system will call make.make_1D_N_2D_SC_system is called, constructing a one-dimensional semiconducting wire in proximity to a 2D superconductor, both in a magnetic field (has Zeeman energy p.Ez) and with Rashba spin-orbit coupling. A superconducitng pincher is also constructed at the barrier between the 1D semiconductor and the 2D superconducting lead.
+				 - make_1DNLeft_1DN_2DS_2DSMiddle_No_NRight : 		Boolean. If defined as instance of ppar and given as True, make.make_system will call make.make_1D_N_2D_SC_system is called, constructing a one-dimensional semiconducting wire in proximity to a 2D superconductor, both in a magnetic field (has Zeeman energy p.Ez) and with Rashba spin-orbit coupling. A superconducitng pincher is also constructed at the barrier between the 1D semiconductor and the 2D superconducting lead.
 
 				 - pincher_SC_lead : 	Boolean. If true, pincher is added in make.make_1D_N_2D_SC_system. Construction of graph is made from onsite/hoppingx/hoppingy_2D_superconductor_pincher
 				  ***
@@ -57,10 +57,11 @@ def set_params(ppar):
 	const = SimpleNamespace(c=2.99792458e17,m_e=0.5109989461e9,hbar=6.582119514e-13,hbar_SI = 1.0547e-34,c_SI = 2.99792458e8,m_e_SI = 9.10938356e-31,) # [c]=nm/s, [m_e]=meV/c^2, [hbar]=meV*s, [hbar_SI]=J*s, [m_e_SI]=kg, [c_SI]=m/s, [m_SI]=kg.
 
 	if ppar.one_D == True:
-		par = SimpleNamespace(LM=0,LR=0,LY=900,mu=0,alphahbar=1.42e-4*const.c*const.hbar,Gamma=180e-3,phiL=0,phiR=0,k=30) # [L]=nm, [mu]=meV, [alpha]=nm*meV, [Gamma]=meV, [phi]=1 # the global parameter class
+		par = SimpleNamespace(LM=0,LR=0,LY=1500.,
+								mu=0,alphahbar=1.42e-4*const.c*const.hbar,Gamma=180e-3,phiL=0,phiR=0,k=30) # [L]=nm, [mu]=meV, [alpha]=nm*meV, [Gamma]=meV, [phi]=1 # the global parameter class
 		par.Nx = 1			# 1D system, strip is in y-direction
-		par.Ny = 24
-		par.ay = float(par.LY)/par.Ny/2. ### I'M HERE
+		par.Ny = 60
+		par.ay = float(par.LY)/par.Ny
 		par.ax = par.ay
 		par.LL = par.ax 	# because 1D system
 	else:
@@ -72,7 +73,10 @@ def set_params(ppar):
 
 	par.GammaL = par.Gamma; par.GammaR=par.Gamma 	# GammaL/R used in make.gamma_phi_fn(site,p)
 	par.m_star = 0.023*const.m_e/(const.c)**2
-	par.m_N = 20.*par.m_star							# effective mass in N ~ 20 times effective mass in S, typically [Proximity effect exercise]
+	if ppar.make_1DNLeft_1DN_2DSMiddle_No_NRight or ppar.make_1DNLeft_1DN_2DS_2DSMiddle_No_NRight:
+		par.m_N = 20.*par.m_star #!!!		# effective mass in N ~ 20 times effective mass in S, typically [Proximity effect exercise]
+	if ppar.make_1D_Heff_LR_leads:
+		par.m_N = par.m_star 			# effective mass is m star, no distinction betwenn N and S mass because now Heff model
 	par.tx = const.hbar**2/(2*par.m_N*par.ax**2) # [t]=meV(=(meV*s)^2/(meV/(nm/s)^2*nm^2))	 
 	par.ty = const.hbar**2/(2*par.m_N*par.ay**2)
 	par.hbar = const.hbar
@@ -90,12 +94,12 @@ def set_params(ppar):
 	#############################################################################
 	######### DOMAINS AND RESOLUTIONS OF INDEPENDENT VARIABLES AND PARAMETERS ###
 	######### *** ###############################################################
-	par.biasEres = 101#301
+	par.biasEres = 1001#251####1001#301
 	#### vs. mu:
 	par.Ezres = 1
-	par.mures = 500#200
-	par.Ez = 1.6	# Ez is the constant, mu is the variable
-	par.mu_values = np.linspace(-10,10,par.mures)#54,par.mures)		# [mu] = meV
+	par.mures = 1001#251####1001#200
+	par.Ez = 0.8#1.6####	# Ez is the constant, mu is the variable. Ez = 2*V_Z in master thesis
+	par.mu_values = np.linspace(-0.6,0.6,par.mures)#0.74,0.76,par.mures)#54,par.mures)		# [mu] = meV
 	par.mu = par.mu_values[0]
 	par.Ez_values = np.array([par.Ez])
 	ppar.var_name,ppar.par_const_name,ppar.par_const = "mu","Ez",par.Ez
@@ -113,7 +117,8 @@ def set_params(ppar):
 	#### Screen Gonly:
 	# par.biasenergies = np.linspace(-2.,2.,par.biasEres) 	# [meV]
 	#### Screen "inside gap":
-	par.biasenergies = np.linspace(-1,1,par.biasEres) 	# [meV]
+	par.bias_maxmin = 0.25
+	par.biasenergies = np.linspace(-par.bias_maxmin,par.bias_maxmin,par.biasEres) 	# [meV]
 
 	#### PINCHER AND GAMMAS #########
 	#### Notes
@@ -121,9 +126,19 @@ def set_params(ppar):
 	#### - as long as Gamma_L/R is specified, dos is not used in calculating g012A
 	#################################
 	par.pincher = True
-	par.t_p_coeff = 3.0
+	par.t_p_coeff = 3
 	par.t_pincher = par.t_p_coeff*par.ty
 
+	"""
+	########## v16: pinchertype specified here, then implemented in make.make_1D_system. It can take the following values:
+	 - "onsite"
+	 - "hopping"
+	 - "onsite and hopping"
+	######################
+	"""
+	ppar.pinchertype = "onsite"
+
+	########### one-level approx model
 	par.Gamma_L = np.pi*np.abs(par.ty)**2*np.ones(par.mures)	# = 3.37 meV
 	par.Gamma_R = np.pi*np.abs(par.ty)**2*np.ones(par.mures)
 	######################
@@ -131,15 +146,27 @@ def set_params(ppar):
 	#### DOUBLERES: 															 #########
 	#### used when wanting to load conductance files with different resolutions. #########
 	######################################################################################
-	doubleres = False
-	if doubleres == True:
-		par.mures_2 = 1
-		par.Ezres_2 = 200
-		par.biasEres_2 = 201
-		par.mu_2 = 0.
-		par.mu_values_2 = np.array([par.mu_2])
-		par.Ez_values_2 = np.linspace(0,10,par.Ezres_2)
-		par.biasenergies_2 = np.linspace(-0.5,0.5,par.biasEres_2)
+	ppar.doubleres = True
+	if ppar.doubleres == True:
+		###### Vs. Ez : ################
+		# par.mures_2 = 1
+		# par.Ezres_2 = 200
+		# par.biasEres_2 = 201
+		# par.mu_2 = 0.
+		# par.mu_values_2 = np.array([par.mu_2])
+		# par.Ez_values_2 = np.linspace(0,10,par.Ezres_2)
+		# par.biasenergies_2 = np.linspace(-0.5,0.5,par.biasEres_2)
+		###### Vs. mu : #################
+		par.mures_2 = 1001#251#IMHERE##1001
+		par.Ezres_2 = 1
+		par.biasEres_2 = 1001#251#IMHERE##1001
+		par.Ez_2 = 0.8#1.6#IMHERE##0.8 			# didived by 2 gives V_Z in thesis!!!
+		par.mu_values_2 = np.linspace(-.6,.6,par.mures_2)
+		par.Ez_values_2 = np.array([par.Ez_2])
+		par.biasenergies_2 = np.linspace(-par.bias_maxmin,par.bias_maxmin,par.biasEres_2)
+
+		par.Gamma_L = np.pi*np.abs(par.ty)**2*np.ones(par.mures_2)	# = 3.37 meV
+		par.Gamma_R = np.pi*np.abs(par.ty)**2*np.ones(par.mures_2)
 
 	"""
 	FOR Calculating/loading 
@@ -150,12 +177,10 @@ def set_params(ppar):
 	----------
 	n : 		index of two eigenstates that have same absolute value of their energy for every value of the variable.
 	"""
-	###
-
 	# n = [24,25] 	# given k = 50
 	# n = [9,10]	# given k = 20
 	# n = [18,19] 	# gien k = 38
-	n = [14,15]		# given k = 30
+	n = [14,15]		# given k = 30 OK
 	ppar.n = n
 
 	##################################################################################
@@ -177,34 +202,39 @@ def set_params(ppar):
 	# par.kF = 2*par.m_SI*par.alpha_SI/(const.hbar_SI)
 	# par.lambda_F = np.pi*const.hbar_SI/(2*par.m_SI*par.alpha_SI)
 
-
-	if ppar.make_N_wire or ppar.make_1D_NLeft_1D_N_2D_S_2D_SMiddle_No_NRight or ppar.make_1D_NLeft_1D_S_Heff_No_NRight:
+	######### par.t_N_lead matters to make pattern backgrounds white (in conductance) ######
+	par.t_N_lead = 1.	# meV
+	if ppar.make_1DNLeft_1DN_2DS_2DSMiddle_No_NRight or ppar.make_1D_NLeft_1D_N_2D_S_2D_SMiddle_No_NRight or ppar.make_1D_NLeft_1D_S_Heff_No_NRight or ppar.make_1DNLeft_1DN_2DSMiddle_No_NRight:
 
 
 		# ppar.pincher_SC_lead = True
 		
-		par.ty_SC_pincher_coeff = 1.#1./0.023
-		par.ty_SC_pincher = par.ty_SC_pincher_coeff*par.ty
-		par.tx_SC_pincher = par.ty_SC_pincher_coeff*par.tx 
-		par.mu_SC_pincher = -2.0*(par.tx_SC_pincher+par.ty_SC_pincher) 
-		par.Delta_pincher = 0.180
 
-		par.t_N = par.ty
+		par.t_N = par.ty 	# is used for semiconductor hamiltonian functions in make module
 
-		par.t_SC_lead_coeff = 50.
+
+		par.t_SC_lead_coeff = 0.0001
 		par.tx_SC_lead = par.t_SC_lead_coeff*par.ty
 		par.ty_SC_lead = par.t_SC_lead_coeff*par.tx
-		par.mu_SC_lead = par.mu_SC_pincher
-		par.Delta_SC_lead = par.Delta_pincher
+		par.mu_SC_lead = -2.0*(par.tx_SC_lead+par.ty_SC_lead)
+		par.Delta_SC_lead = 0.180*1000.
 
 		######### Defining Ez of S and S lead ################################################
 		######### Differs from that of N because effective g-factor is different 	##########
-		par.g_S_over_g_N = -1./5.
+		par.g_S_over_g_N = -1./5
 		par.Ez_2D_S_lead = par.g_S_over_g_N*par.Ez
 		par.Ez_2D_S = par.g_S_over_g_N*par.Ez
 
-		######### par.t_N_lead matters to make pattern backgrounds white (in conductance) ######
-		par.t_N_lead = 10.
+
+		if ppar.make_1DNLeft_1DN_2DSMiddle_No_NRight == False: 	# that particular system is implemented as 1D N attached to 2D sc lead, so pincher t == SC lead t.
+			par.ty_SC_pincher_coeff = 1.#1./0.023
+			par.ty_SC_pincher = par.ty_SC_pincher_coeff*par.ty
+			par.tx_SC_pincher = par.ty_SC_pincher_coeff*par.tx 
+			par.mu_SC_pincher = par.mu_SC_lead
+			par.Delta_pincher = par.Delta_SC_lead
+
+
+
 
 	if ppar.make_1D_NLeft_1D_N_2D_S_2D_SMiddle_No_NRight or ppar.make_1D_NLeft_1D_S_Heff_No_NRight:
 		ppar.oneNLead = True   		# to be used in calc to only calculate G_11, and not G_12 as well.

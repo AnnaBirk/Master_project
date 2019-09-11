@@ -60,7 +60,7 @@ def plot_E_vs_Ez(par,xlabel="$E_z\, [meV]$",ylabel="$E_n\, [meV]$",fontsize=16):
 
 
 
-def plot_map(dependent_var,x,y,filename,figtitle,xlabel,ylabel,cm):
+def plot_map(dependent_var,x,y,filename,figtitle,xlabel,ylabel,cm,**kwargs):
 	"""
 	Plots general map of data of dependent_var vs independent_vars[0]=x_values, ---[1]=y_values, with filename, figtitle, labels and colormap cm.
 
@@ -69,21 +69,36 @@ def plot_map(dependent_var,x,y,filename,figtitle,xlabel,ylabel,cm):
 		par: parameters. Take values of biasenergies used in calculation to plot against.
 		independent_vars : 	list of two sets of independent variable values, to be plotted on the x and y axis.
 		cm : 	colormap. E.g. "seismic" = red and blue, "PuBu" = pink/white to blue.
+
+		**kwargs:	figsize_inches
+					vmin
+					vmax
 	"""
 	fig,ax = plt.subplots()
 	X,Y = np.meshgrid(x,y)
 	dependent_var = np.transpose(dependent_var)
 
 	simplecontour = ax.contourf(X,Y,dependent_var)
-	pcm = ax.pcolormesh(X,Y,dependent_var,cmap = cm)
+	if "vmin_max" in kwargs:
+		pcm = ax.pcolormesh(X,Y,dependent_var,cmap = cm,vmin=kwargs["vmin_max"][0],vmax=kwargs["vmin_max"][1])
+	else:
+		pcm = ax.pcolormesh(X,Y,dependent_var,cmap = cm)
 	fig.colorbar(pcm)
 
 	ax.set_title(figtitle,fontsize=16)
 	ax.set_xlabel(xlabel,fontsize=16)
 	ax.set_ylabel(ylabel,fontsize=16)
 
-	fig.set_size_inches(4, 3)
+	if "figsize_inches" in kwargs:
+		fig.set_size_inches(kwargs["figsize_inches"][0],kwargs["figsize_inches"][1])
+	else:
+		fig.set_size_inches(4,3)
 	plt.tight_layout()
+
+	if "add_vlines" in kwargs:
+		for x_ in kwargs["add_vlines"]:
+			plt.axvline(x=x_)
+
 
 	plt.savefig(filename)	
 	print("%s: Saved figure"%misc.round_time(datetime.datetime.now(),round_to=60), filename)	
@@ -122,7 +137,7 @@ def plot_G_ij(par,scaling,G_ij,filename,figtitle,xlabel,ylabel):
 
 
 
-def plot_G_ij_var(par,scaling,G_ij,var_values_str,filename,figtitle,xlabel,ylabel,cm,biasenergies_2=[],Ez_values_2=[],u2mv2_factor=1,**kwargs):#var_values_=[], E1_var=[], Em1_var=[], u2mv2_E1_var=[], u2mv2_Em1_var=[]):
+def plot_G_ij_var(par,scaling,G_ij,var_values_str,filename,figtitle,xlabel,ylabel,cm,biasenergies_2=[],Ez_values_2=[],u2mv2_factor=1.,rasterized=True,cmap_logscale=0.001,colorbar_ticks=[],**kwargs):#var_values_=[], E1_var=[], Em1_var=[], u2mv2_E1_var=[], u2mv2_Em1_var=[]):
 
 	"""
 	Parameters
@@ -148,6 +163,10 @@ def plot_G_ij_var(par,scaling,G_ij,var_values_str,filename,figtitle,xlabel,ylabe
 
 		u2mv2_factor : 		int, float.
 							Factor to scale the u2mv2-values such that their max value equals the max value of the energy of the corresponding state.
+
+		colorbar_ticks : 	list.
+							Specifies the ticks to be displayed in the colorbar. Default value : []. If the list is empty (default), the ticks displayed are determined automatically by matplotlib.
+
 		**kwargs : 	
 			legend : 			list, tuple.
 
@@ -166,6 +185,8 @@ def plot_G_ij_var(par,scaling,G_ij,var_values_str,filename,figtitle,xlabel,ylabe
 								Other biasenergies for which the conductance is plotted against. Used when conductance resolution in bias is different from that of the energies.
 
 			Ez_values_2 : 		Similarly.
+
+			E_u2mv2_1_only : 	Boolean. If given and True, then only plotting E1 and u2mv21, for visual clarity.
 
 
 	Example usage
@@ -203,7 +224,9 @@ def plot_G_ij_var(par,scaling,G_ij,var_values_str,filename,figtitle,xlabel,ylabe
 
 	fig,ax = plt.subplots()
 
-	fig.set_size_inches(8, 4.3)
+	# fig.set_size_inches(4.5, 4.3)
+	fig.set_size_inches(3.5, 3.1)
+	ax.tick_params(labelsize=12)
 
 	G_ij=np.transpose(G_ij)
 
@@ -219,9 +242,13 @@ def plot_G_ij_var(par,scaling,G_ij,var_values_str,filename,figtitle,xlabel,ylabe
 		exec("global simplecontour; simplecontour = ax.contourf(par." + var_values_str + "_2,par.biasenergies_2,G_ij)")
 	
 	if scaling == "SymLogNorm":
+		# commented out 30082019 : \
+		# linthresh=0.0001,linscale=0.0001,vmin=G_ij.min(),vmax=G_ij.max()\
+		#<percentsign>s,vmin=G_ij.min(),vmax=G_ij.max(),	linscale=0.01\
 		exec('global pcm; pcm = ax.pcolormesh(par.%s,par.biasenergies,G_ij,\
 						norm = colors.SymLogNorm(\
-						linthresh=0.0001,linscale=0.0001,vmin=G_ij.min(),vmax=G_ij.max()),cmap=cm)' %(var_values_str))
+						%s,vmin=-G_abs_max,vmax=G_abs_max,linscale=0.05\
+						),cmap=cm, rasterized=True)' %(var_values_str,cmap_logscale))
 
 	elif scaling == "PowerNorm":
 		exec('global pcm; pcm = ax.pcolormesh(par.%s,par.biasenergies,G_ij,\
@@ -235,33 +262,75 @@ def plot_G_ij_var(par,scaling,G_ij,var_values_str,filename,figtitle,xlabel,ylabe
 
 		plt.gcf().subplots_adjust(bottom=0.15)
 		plt.gcf().subplots_adjust(left=0.2)
-	
-	
-	if len(kwargs) == 0:
-		cb = fig.colorbar(pcm)#,extend='both')
-		cb.formatter.set_powerlimits((-3, 4))
-		cb.update_ticks()
 
 	if len(kwargs)!=0: #len(var_values_) != 0 & len(E1_var) != 0 & len(Em1_var) != 0 & len(u2mv2_E1_var) != 0 & len(u2mv2_Em1_var) != 0 :
 		print(" - adding energies and u2mv2 to conductance plot.")
-		u2mv2_factor = np.round(u2mv2_factor,2)
 		
 		my_blue = plt.cm.get_cmap("PuBu",lut=100)(85)
 		my_red = plt.cm.get_cmap("OrRd")(200)
 
-		ax.plot(kwargs["var_values_"], kwargs["E1_var"], color=my_blue, linewidth=1.5, label=kwargs["legend"][0])
-		ax.plot(kwargs["var_values_"], kwargs["Em1_var"], "--", color=my_red, linewidth=1.5,label=kwargs["legend"][1])
-		ax.plot(kwargs["var_values_"], kwargs["u2mv2_E1_var"]*u2mv2_factor, color="black", linewidth=1.5,label=kwargs["legend"][2]+"$\cdot %s$"%u2mv2_factor)
-		ax.plot(kwargs["var_values_"], kwargs["u2mv2_Em1_var"]*u2mv2_factor, "--", color="black", linewidth=1.5,label=kwargs["legend"][3]+"$\cdot %s$"%u2mv2_factor)
-		
+		if kwargs["E_u2mv2_1_only"]:		# only E1 and u2mv21, for visual clarity
+			ax.plot(kwargs["var_values_2_"], kwargs["E1_var"], color=my_blue, linewidth=1.5, label="$E_1\, [meV]$")
+			ax.plot(kwargs["var_values_2_"], kwargs["u2mv2_E1_var"]*u2mv2_factor, color="black", linewidth=1.5,label="$(u^2_1-v^2_1)$"+"$\cdot %g$"%u2mv2_factor)
+		elif kwargs["E_u2mv2_sum_site0_siteNy_1_only"]:
+
+
+
+
+
+			### !!! should be in the calc module!
+			normalization_allsites = par.u2_mu_sites_1+par.v2_mu_sites_1
+			u2mv2_allsites = (par.u2_mu_sites_1-par.v2_mu_sites_1)/normalization_allsites
+
+			u2mv2_factor_allsites = np.amax(np.abs(par.E1_mu))/np.amax(np.abs(u2mv2_allsites),axis=0)
+
+			u2mv2_toplot = u2mv2_allsites*u2mv2_factor #np.multiply(u2mv2_allsites,u2mv2_factor_allsites) 	# same shape as u2mv2_allsites
+			########!!!##############################
+
+
+
+
+			ax.plot(kwargs["var_values_2_"], kwargs["E1_var"], color=my_blue, linewidth=1.5, label="$E_1\, [meV]$")
+			ax.plot(kwargs["var_values_2_"], kwargs["u2mv2_E1_var"]*u2mv2_factor, color="black", linewidth=1.5,linestyle='--',label="$\sum_{i=0}^{N_y-1} (u^2_1-v^2_1)_i $"+"$\cdot %.2g$"%u2mv2_factor)
+			# ax.plot(kwargs["var_values_"], u2mv2_site0*u2mv2_factor, color="green", linewidth=1.5, label="u2-v2 site 0")
+
+
+
+
+			#######3 IM HERE
+
+			# fig1, ax1 = plt.subplots()
+			# ax1.plot(kwargs["var_values_2_"], u2mv2_toplot[:,0])
+			# plt.show()
+
+			######################
+
+
+
+			for i in [0]:#,62]:#[0,23]:#[0,9,14,23]:#len(u2mv2_allsites[0,:])):
+				ax.plot(kwargs["var_values_2_"], u2mv2_toplot[:,i], linewidth=1.5, linestyle='--', label="$(u^2_1-v^2_1)/(u^2_1+v^2_1)$"+"$\cdot %.2g$ site %s"%(u2mv2_factor,i))
+
+				### !!! IM HERE
+
+
+
+				###
+
+
+			ax.grid("on")
+
+		else:
+			ax.plot(kwargs["var_values_2_"], kwargs["E1_var"], color=my_blue, linewidth=1.5, label=kwargs["legend"][0])
+			ax.plot(kwargs["var_values_2_"], kwargs["Em1_var"], "--", color=my_red, linewidth=1.5,label=kwargs["legend"][1])
+			ax.plot(kwargs["var_values_2_"], kwargs["u2mv2_E1_var"]*u2mv2_factor, color="black", linewidth=1.5,label=kwargs["legend"][2]+"$\cdot %s$"%u2mv2_factor)
+			ax.plot(kwargs["var_values_2_"], kwargs["u2mv2_Em1_var"]*u2mv2_factor, "--", color="black", linewidth=1.5,label=kwargs["legend"][3]+"$\cdot %s$"%u2mv2_factor)
 		
 		box = ax.get_position()
 		# making separate axis for colorbar
 		cbaxes = fig.add_axes(ax)#[box.x0+box.width,box.y0+box.height*0.25,box.width*0.05,box.height*0.75]) 
 
 		# cbaxes.set_position([box.x0+box.width,box.y0+box.height*0.25,box.width*0.05,box.height*0.75]) 
-	
-		cb = fig.colorbar(pcm, orientation='vertical',ax=cbaxes, shrink=0.75)
+		
 		# # Shrink current axis's height by 10% on the bottom
 
 		ax.set_position([box.x0, box.y0 + box.height*0.25,
@@ -270,15 +339,37 @@ def plot_G_ij_var(par,scaling,G_ij,var_values_str,filename,figtitle,xlabel,ylabe
 
 		# Put a legend below current axis
 		ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.25),
-		          fancybox=True, ncol=2,fontsize=12)
+		          fancybox=True, ncol=2,fontsize=7)
 
+	# # 30082019 : commented this
+	# if len(kwargs) == 0: 		# if no energies or charges to be added to the plot
+	# 	# cbaxes = fig.add_axes(ax)
+	# 	# cb = fig.colorbar(pcm)#,extend='both')
+	# 	# cb.formatter.set_powerlimits((-3, 4))
+	# 	# cb.update_ticks()
+	# 	print("hello")
 
-	ax.set_title(figtitle,fontsize=16)
-	ax.set_xlabel(xlabel,fontsize=16)
-	ax.set_ylabel(ylabel,fontsize=16)
+	# If length of colorbar_ticks is non-zero, this sets the user-defined ticks:
+	if len(colorbar_ticks)>0:
+		cb = fig.colorbar(pcm, orientation='vertical',ax=ax, shrink=0.75, ticks=colorbar_ticks)
+	else:
+		cb = fig.colorbar(pcm, orientation='vertical',ax=ax, shrink=0.75)
+
+	ax.set_title(figtitle,fontsize=15)
+	ax.set_xlabel(xlabel,fontsize=12)
+	ax.set_ylabel(ylabel,fontsize=12)
+	ax.set_ylim(bottom=-par.bias_maxmin,top=par.bias_maxmin)
+
 	ax.ticklabel_format(style='sci',scilimits=(-3,4))
 
-	plt.savefig(filename + "_" + scaling + ".pdf")	
+	# fig.tight_layout()
+	fig.subplots_adjust(left=0.19, bottom=0.15, right=0.93)
+
+	cb.ax.tick_params(labelsize=12)
+
+
+	ax.set_rasterized(rasterized)
+	plt.savefig(filename + "_" + scaling + ".pdf",dpi=300)	
 	print("%s: Saved figure"%misc.round_time(datetime.datetime.now(),round_to=60), filename + scaling + ".pdf")	
 
 
@@ -336,57 +427,121 @@ def plot_G_ij_var_muconst(par,G_ij,index_of_varconst,filename,figtitle,xlabel,yl
 
 # 	print("%s: Saved figure"%misc.round_time(datetime.datetime.now(),round_to=60), filename + ".pdf")
 
-def plot_G_1_G_2_varconst(par,G_1,G_2,index_of_varconst,filename,figtitle,xlabel,ylabel,legend,ylim,**kwargs):
+def plot_G_1_G_2_varconst_copy_31082019(par,G_1,G_2,index_of_varconst,filename,figtitle,xlabel,ylabel,legend,ylim,colors,**kwargs):
 	"""
 
 	Parameters
 	----------
 	**kwargs : 	optionally also setting a third conductance, G_3
 	"""
+	plt.hold("off")
 	fig,ax = plt.subplots()
+	fig.set_size_inches(3.5, 3.1)
+	ax.tick_params(labelsize=12)
 
-	ax.plot(par.biasenergies,G_1[index_of_varconst,:])
+	plt.rcParams.update({'font.size': 12})
+	ax.plot(par.biasenergies,G_1[index_of_varconst,:],colors[0])
 	ax.hold("on")
-	ax.plot(par.biasenergies,G_2[index_of_varconst,:])
+	ax.plot(par.biasenergies,G_2[index_of_varconst,:],colors[1])
 
 	if len(kwargs) == 1:
 		print("len kwargs = 1")
 		plt.hold("on")
-		ax.plot(par.biasenergies,kwargs["G_3"][index_of_varconst,:])
+		ax.plot(par.biasenergies,kwargs["G_3"][index_of_varconst,:],colors[2])
 	if len(kwargs) == 2:
 		print("len kwargs = 2")
 		plt.hold("on")
-		ax.plot(par.biasenergies,kwargs["G_3"][index_of_varconst,:])
+		ax.plot(par.biasenergies,kwargs["G_3"][index_of_varconst,:],'--',color=colors[2])
 		ax.hold("on")
-		ax.plot(par.biasenergies,kwargs["G_4"][index_of_varconst,:])
+		ax.plot(par.biasenergies,kwargs["G_4"][index_of_varconst,:],'--',color=colors[3])
 	if len(kwargs) == 3:
 		print("len kwargs = 3")
 		plt.hold("on")
-		ax.plot(par.biasenergies,kwargs["G_3"][index_of_varconst,:])
+		ax.plot(par.biasenergies,kwargs["G_3"][index_of_varconst,:],colors[2])
 		ax.hold("on")
-		ax.plot(par.biasenergies,kwargs["G_4"][index_of_varconst,:])
+		ax.plot(par.biasenergies,kwargs["G_4"][index_of_varconst,:],colors[3])
 		ax.hold("on")
-		ax.plot(par.biasenergies,kwargs["G_5"][index_of_varconst,:])
+		ax.plot(par.biasenergies,kwargs["G_5"][index_of_varconst,:],colors[4])
 
-	plt.hold("off")
 
-	ax.set_title(figtitle,fontsize=16)
-	ax.set_xlabel(xlabel,fontsize=16)
-	ax.set_ylabel(ylabel,fontsize=16)
+
+	ax.set_title(figtitle,fontsize=12)
+	ax.set_xlabel(xlabel,fontsize=12)
+	ax.set_ylabel(ylabel,fontsize=12)
 	ax.set_ylim(ylim)
-	ax.ticklabel_format(style='sci',scilimits=(-3,4))
+	ax.ticklabel_format(style='sci',scilimits=(-3,4),fontsize=12)
+	fig.subplots_adjust(left=0.21,bottom=0.16,right=0.99,top=0.99)
 
-	ax.legend(legend,loc=4,fontsize=16)
+	ax.legend(legend,loc=4,fontsize=12)
 	plt.grid("on")
+	plt.show()
 
-	plt.savefig(filename + ".pdf")	
+	fig.savefig(filename + ".pdf")	
 
 	print("%s: Saved figure"%misc.round_time(datetime.datetime.now(),round_to=60), filename + ".pdf")
 
 
 
 
-def pplot_E_vs_var(par,energies,var_values,figfilename,xlim,ylim,title,xlabel,ylabel,add_zoom,ylim_zoom,yticks,file_extension,u2mv2,u2_mu,v2_mu):
+def plot_G_1_G_2_varconst(par,G_1,G_2,index_of_varconst,filename,figtitle,xlabel,ylabel,legend,ylim,colors,**kwargs):
+	"""
+
+	Parameters
+	----------
+	**kwargs : 	optionally also setting a third conductance, G_3
+	"""
+	plt.hold("off")
+	fig,ax = plt.subplots(1,1)
+	fig.set_size_inches(3.5, 3.1)
+	ax.tick_params(labelsize=12)
+
+	plt.rcParams.update({'font.size': 12})
+	ax.plot(par.biasenergies,G_1[index_of_varconst,:],colors[0])
+	ax.hold("on")
+	ax.plot(par.biasenergies,G_2[index_of_varconst,:],colors[1])
+
+	if len(kwargs) == 1:
+		print("len kwargs = 1")
+		plt.hold("on")
+		ax.plot(par.biasenergies,kwargs["G_3"][index_of_varconst,:],colors[2])
+	if len(kwargs) == 2:
+		print("len kwargs = 2")
+		plt.hold("on")
+		ax.plot(par.biasenergies,kwargs["G_3"][index_of_varconst,:],'--',color=colors[2])
+		ax.hold("on")
+		ax.plot(par.biasenergies,kwargs["G_4"][index_of_varconst,:],'--',color=colors[3])
+	if len(kwargs) == 3:
+		print("len kwargs = 3")
+		plt.hold("on")
+		ax.plot(par.biasenergies,kwargs["G_3"][index_of_varconst,:],colors[2])
+		ax.hold("on")
+		ax.plot(par.biasenergies,kwargs["G_4"][index_of_varconst,:],colors[3])
+		ax.hold("on")
+		ax.plot(par.biasenergies,kwargs["G_5"][index_of_varconst,:],colors[4])
+
+	# from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+
+	# axins = ax.inset_axes(ax, width="40%", height="30%", loc=3)
+
+	ax.set_title(figtitle,fontsize=12)
+	ax.set_xlabel(xlabel,fontsize=12)
+	ax.set_ylabel(ylabel,fontsize=12)
+	ax.set_ylim(ylim)
+	ax.ticklabel_format(style='sci',scilimits=(-3,4),fontsize=12)
+	fig.subplots_adjust(left=0.21,bottom=0.16,right=0.99,top=0.99)
+
+	ax.legend(legend,loc=4,fontsize=12)
+	plt.grid("on")
+	plt.show()
+
+	fig.savefig(filename + ".pdf")	
+
+	print("%s: Saved figure"%misc.round_time(datetime.datetime.now(),round_to=60), filename + ".pdf")
+
+
+
+
+def pplot_E_vs_var(par,ppar,energies,var_values,figfilename,xlim,ylim,title,xlabel,ylabel,add_zoom,ylim_zoom,yticks,file_extension,u2mv2,u2_mu,v2_mu):
 	"""
 	Plots energy spectrum versus a variable whose values are given by energies and var_values, respectively.
 
@@ -400,9 +555,9 @@ def pplot_E_vs_var(par,energies,var_values,figfilename,xlim,ylim,title,xlabel,yl
 	if add_zoom==False:
 		fig,ax = plt.subplots()
 	else:
-		fig,ax = plt.subplots(nrows=2,sharex='all',gridspec_kw = {'height_ratios':[3, 1]})
+		fig,ax = plt.subplots(nrows=2,sharex='all',gridspec_kw = {'height_ratios':[3, 3]})
 
-	fig.set_size_inches(4.5, 4)
+	fig.set_size_inches(4.5, 7)
 	ax[0].set_title(title)#,fontsize=18)
 	ax[0].set_ylabel(ylabel)#,fontsize=16)
 	ax[0].set_xlim([xlim[0],xlim[1]])
@@ -423,10 +578,13 @@ def pplot_E_vs_var(par,energies,var_values,figfilename,xlim,ylim,title,xlabel,yl
 			ax[1].plot(var_values,energies,color=colors[-15],linewidth=1.5)
 		# elif u2mv2 is given as input:
 		elif len(u2mv2) > 1:
-			ax[1].plot(var_values,energies,color=colors[-15],linewidth=1.5)
+			ax[1].plot(var_values,par.E1_mu,color="red")#colors[-15],linewidth=1.5)
+			ax[1].plot(var_values,par.Em1_mu,color="blue")#colors[-15],linewidth=1.5)
 			ax[1].plot(var_values,u2mv2*0.01,"black")
-			ax[1].plot(var_values,u2_mu*0.01,"--")
-			ax[1].plot(var_values,v2_mu*0.01,"--")
+
+			if u2_mu != []:
+				ax[1].plot(var_values,u2_mu*0.01,"--")
+				ax[1].plot(var_values,v2_mu*0.01,"--")
 
 			# ax[1].scatter(var_values,u2mv2*0.0004,cmap="seismic")
 		else:

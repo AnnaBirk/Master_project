@@ -80,10 +80,11 @@ def onsite_1D_semiconductor(site,p):
 
 	??? : + p.Ez*sigma_y/2 ok?
 	"""
+	#print("%s: in onsite_1D_semiconductor()" %str(misc.round_time(datetime.datetime.now(),round_to=60)))
 	return (2*p.t_N - p.mu)*tau_z + p.Ez*sigma_y/2.
 
 
-def hoppingy_1D_semiconductor(site,p):
+def hoppingy_1D_semiconductor(site0,site1,p):
 	"""
 	Hopping energy of one-dimensional semiconductor, whose Hamiltonian is given as in onsite_1D_semiconductor.
 
@@ -92,6 +93,7 @@ def hoppingy_1D_semiconductor(site,p):
 	p.t_N : 	tunneling amplitude inside the semiconductor.
 
 	"""
+	#print("%s: in hoppingy_1D_semiconductor()" %str(misc.round_time(datetime.datetime.now(),round_to=60)))
 	return -p.t_N*tau_z + 1j*p.alphahbar/(2*p.ay)*sigma_ytau_z 
 
 
@@ -179,7 +181,7 @@ def hoppingy_2D_superconductor_lead(site0,site1,p):
 
 	Parameters
 	----------
-	p.ty_SC_lead: 	hopping in y-direction of pincher sites.
+	p.ty_SC_lead: 	hopping in y-direction.
 	ay_eff : 		the lattice constant in the y-direction that corresponds to the bandwidth p.ty_SC_lead that is chosen in set_params.py. Taking ay_eff to be a positive length.
 
 	Notes
@@ -245,7 +247,7 @@ def onsite(site,p):
 	Gamma :	proximitized superconducting tunneling. Functional dependence on spacial coordinate(s) is given by the function Gamma_phi_fn(site,p); [Gamma] = meV
 	phi : 	Superconducting phase.
 	"""
-
+	 # print("%s: in onsite()" %str(misc.round_time(datetime.datetime.now(),round_to=60)))
 	[Gamma,phi] = Gamma_phi_fn(site,p)
 	return (2*(p.tx+p.ty) - p.mu)*tau_z + p.Ez*sigma_y/2. + Gamma*(np.cos(phi)*tau_x - np.sin(phi)*tau_y)
 
@@ -257,7 +259,7 @@ def onsite_1D(site,p):
 	Parameters - see onsite function
 	----------
 	"""
-
+	 # print("%s: in onsite_1D()" %str(misc.round_time(datetime.datetime.now(),round_to=60)))
 	[Gamma,phi] = Gamma_phi_fn(site,p)
 	return (2*p.ty - p.mu)*tau_z + p.Ez*sigma_y/2. + Gamma*(np.cos(phi)*tau_x - np.sin(phi)*tau_y)
 
@@ -269,12 +271,19 @@ def onsite_1D_pincher(site,p):
 	p.pincher : 	True if pincher is attached.
 	p.t_pincher : 	Value of ty for pincher at current site. Note that if you want a different value of t_pincher, you need to call onsite_1D() separately after re-defining p.t_pincher = (e.g.) p.t_pincherL or p.t_pincherR.
 	"""
-
+	 # print("%s: in onsite_1D_pincher()" %str(misc.round_time(datetime.datetime.now(),round_to=60)))
 	[Gamma,phi] = Gamma_phi_fn(site,p)
 	if p.pincher == True:
 		return (2*p.t_pincher - p.mu)*tau_z + p.Ez*sigma_y/2. + Gamma*(np.cos(phi)*tau_x - np.sin(phi)*tau_y)
 	else:
 		ValueError("p.pincher != True in onsite_1D_pincher. Need it to be True in order to compute onsite_1D Hamiltonian for the t-value p.t_pincher.")
+
+
+def hopping_1D_pincher(site0,site1,p):
+	"""
+	p.t_pincher : 	ty value of pincher
+	"""
+	return -p.t_pincher*tau_z + 1j*p.alphahbar/(2.*p.ax)*sigma_ytau_z
 
 
 def hoppingx(site0,site1,p):
@@ -289,7 +298,7 @@ def hoppingx(site0,site1,p):
 	-----
 	This is the same functional form as for a 2D/1D system.
 	"""
-
+	 # print("%s: in hoppingx()" %str(misc.round_time(datetime.datetime.now(),round_to=60)))
 	return -p.tx*tau_z + 1j*p.alphahbar/(2.*p.ax)*sigma_ytau_z 
 
 
@@ -300,7 +309,7 @@ def hoppingy(site0,site1,p):
 	Parameters and Notes - see onsite and hoppingx functions
 	--------------------
 	"""
-
+	 # print("%s: in hoppingy()" %str(misc.round_time(datetime.datetime.now(),round_to=60)))
 	return -p.ty*tau_z - 1j*p.alphahbar/(2.*p.ay)*sigma_xtau_z
 
 def hoppingy_t_(site0,site1,p):
@@ -316,6 +325,7 @@ def hoppingy_t_(site0,site1,p):
 	Used e.g. in implementing a pincher. In that case, e.g. t_=p.t_pincher_L or R.
 	Since part of the hopping Hamiltonian for which Kwant demands have only the arguments site0, site1, p, t_ needs to be saved in p in order to use this functoin, and cannot be passed as an extra argument to hoppingy_t_.
 	"""
+	print("%s: in hopping_t_()" %str(misc.round_time(datetime.datetime.now(),round_to=60)))
 	return -p.t_*tau_z - 1j*p.alphahbar/(2.*p.ay)*sigma_xtau_z
 
 
@@ -376,20 +386,65 @@ def make_1D_system(p,ppar):
 	??? (see below)
 	"""
 
+	print("%s: in make_1D_system()" %str(misc.round_time(datetime.datetime.now(),round_to=60)))
 	import kwant
 
 	sys = kwant.Builder()
 
-	sys[(lat(x,y) for x in p.left for y in range(p.Ny))] = onsite_1D#(lat(0,0),p) 	#!!!???
-	sys[kwant.builder.HoppingKind((0,1),lat)] = hoppingy#(lat(0,0),lat(0,1),p)
+	#### v15 and (in written notes) v15_2: only hopping
+	#### v15_1: hopping AND onsite
+	#### v15_2_1: only hopping AND tp<0
+	#### v16: pincher as (positive) onsite
 
-	if p.pincher == True:
-		print(" - Adding pincher")
-		"""Attaching extra sites with hoppings p.tL/R:"""
-		sys[lat(p.left[0],p.Ny-1)] = onsite_1D_pincher#(lat(p.left[0],p.Ny-1),p)
-		sys[lat(p.left[0],0)] = onsite_1D_pincher#(lat(p.left[0],p.Ny-1),p)
-		# sys[(p.left,p.)]	#???: How to implement hopping for one specific site, not using neighbors or HoppingKind?
-		# sys[0,0] = hoppingy_t_
+	########### ONSITE ONLY: ############
+	if ppar.pinchertype == "onsite":
+		sys[(lat(x,y) for x in p.left for y in range(p.Ny))] = onsite_1D
+		sys[kwant.builder.HoppingKind((0,1),lat)] = hoppingy
+
+		if p.pincher == True:
+			print(" - Adding pincher")
+
+			########### ONSITE ONLY: ################
+			# sys[(lat_pincher(x,y) for x in p.left for y in [0,p.Ny-1])] = onsite_1D_pincher # <-- proves problematic / does not give same result as with same lat for pincher. Maybe this is root of problem implementing tp as hopping only? [??? v16]
+			sys[lat(p.left[0],p.Ny-1)] = onsite_1D_pincher
+			sys[lat(p.left[0],0)] = onsite_1D_pincher
+			# sys[(lat(x,y) for x in p.left[0] for y in [0,p.Ny-1])] = onsite_1D_pincher
+
+
+	elif ppar.pinchertype == "hopping":
+		####### HOPPING ONLY: ####### 
+		if p.pincher == True:
+			print(" - Adding pincher")
+
+			lat_pincher = kwant.lattice.square()
+
+			### HOPPING ONLY / HOPPING AND ONSITE : makes two last onsites on each edge of wire, then hopping between the (nearest) neighbors. ###
+			sys[(lat_pincher(x,y) for x in p.left for y in [0,1,p.Ny-2,p.Ny-1])] = onsite_1D_pincher
+
+			sys[lat_pincher.neighbors()] = hopping_1D_pincher		
+
+		# i) adds onsite and hopping until next-to edge-sites in wire:
+		sys[(lat(x,y) for x in p.left for y in range(1,p.Ny-1))] = onsite_1D
+		sys[lat.neighbors()] = hoppingy
+		# ii) adds onsite only on edge sites in wire:
+		sys[(lat(x,y) for x in p.left for y in [0,p.Ny-1])] = onsite_1D
+
+
+	elif ppar.pinchertype == "hopping and onsite":
+
+		if p.pincher == True:
+			print(" - Adding pincher")
+
+			lat_pincher = kwant.lattice.square()
+
+			### HOPPING ONLY / HOPPING AND ONSITE : makes two last onsites on each edge of wire, then hopping between the (nearest) neighbors. ###
+			sys[(lat_pincher(x,y) for x in p.left for y in [0,1,p.Ny-2,p.Ny-1])] = onsite_1D_pincher
+
+			sys[lat_pincher.neighbors()] = hopping_1D_pincher	
+	
+		sys[(lat(x,y) for x in p.left[0] for y in range(1,p.Ny-1))] = onsite_1D 
+		sys[lat.neighbors()] = hoppingy
+	
 
 	"""Attaching leads to this "L" region:"""
 	lead = make_lead_onesite_wide_1D(p)
@@ -407,7 +462,43 @@ def make_1D_system(p,ppar):
 
 	return sys
 
-def make_1D_N_2D_SC_system(p,ppar):
+
+def make_1DNLeft_1DN_2DSMiddle_No_NRight_system(p,ppar):
+	"""
+	Makes system that is HN+HS:
+			 - 1D HN wire
+			 - 2D HS lead connecting along whole wire length
+			 - 1D Left N lead attached
+			 - No Right lead attached, because to compare to calibration system where G11 is considered in the first round of calibrations.
+	"""
+
+	print("%s: in make_1DNLeft_1DN_2DSMiddle_No_NRight_system()" %str(misc.round_time(datetime.datetime.now(),round_to=60)))
+
+	import kwant
+
+	sys = kwant.Builder()
+
+	sys[(lat(x,y) for x in [0] for y in range(p.Ny))] = onsite_1D_semiconductor 
+	sys[kwant.builder.HoppingKind((0,1),lat)] = hoppingy_1D_semiconductor
+
+	"""Attaching leads to this "L" region:"""
+	lead = make_lead_onesite_wide_1D(p)
+
+	sys.attach_lead(lead)
+	#sys.attach_lead(lead.reversed())
+
+	""" 
+	Adding SC lead last. In that way, the indexing of the smatrix will work as before when wanting to access the other leads. In order to access from the SC lead, acces the 2nd lead index in e.g. the smatrix.
+	"""
+	if ppar.SClead == True:
+		SClead = make_SC_lead_Ny_wide(p)
+		sys.attach_lead(SClead)
+		print(" - Attached SC lead")
+
+	return sys
+
+
+def make_1DNLeft_1DN_2DS_2DSMiddle_No_NRight_system(p,ppar):
 
 	"""
 
@@ -417,6 +508,7 @@ def make_1D_N_2D_SC_system(p,ppar):
 	 - x-coordinate of the 2D pincher layer is taken to be at +1. So the pincher layer is 1D, but implemented as a 2D Hamiltonian because it needs to have couplings between it and the middle N.
 
 	"""
+	print("%s: in make_1DNLeft_1DN_2DS_2DSMiddle_No_NRight_system()" %str(misc.round_time(datetime.datetime.now(),round_to=60)))
 
 	import kwant
 
@@ -528,7 +620,7 @@ def make_system(p,ppar):
 
 	Parameters
 	----------
-	ppar.make_N_wire : 	Boolean.
+	ppar.make_1DNLeft_1DN_2DS_2DSMiddle_No_NRight : 	Boolean.
 							If True or 1, a 1D semiconducting wire is constructed with a 2D superconductor connected to it along the whole wire (along the y-direction), with a pincher layer of SC (???given by a 2D hamiltonian but only with one site in width for now ???ok???) at the boundary between the semiconductor and the superconducting lead.
 
 	Notes
@@ -539,16 +631,17 @@ def make_system(p,ppar):
 	print("%s: in make_system()" %str(misc.round_time(datetime.datetime.now(),round_to=60)))
 
 	if ppar.one_D == True:
-		
-		if ppar.make_N_wire:
-			sys = make_1D_N_2D_SC_system(p,ppar)				# make 1D N-N(S)-N system, where middle N is 1D and middle S is 2D.
+		if ppar.make_1D_Heff_LR_leads:
+			sys = make_1D_system(p,ppar)						# make 1D N-S-N system, where middle S is the effective Hamiltonian of the proximitized semiconductor, and there is no middle S lead, meaning that conductances above the gap obrained in this model are not accurate, as modes should in the real physical system have been able to escape through the middle S lead above the gap (where the middle S has available quasiparticle excitations).
+		elif ppar.make_1DNLeft_1DN_2DSMiddle_No_NRight:
+			sys = make_1DNLeft_1DN_2DSMiddle_No_NRight_system(p,ppar)
+		elif ppar.make_1DNLeft_1DN_2DS_2DSMiddle_No_NRight:
+			sys = make_1DNLeft_1DN_2DS_2DSMiddle_No_NRight_system(p,ppar)				# make 1D N-N(S)-N system, where middle N is 1D and middle S is 2D.
 		elif ppar.make_1D_NLeft_1D_S_Heff_No_NRight:
 			sys = make_1D_NLeft_1D_S_Heff_No_NRight(p,ppar) 	# make 1D N-S junction for calibration, where S has the effective Hamiltonian of the proximitized semiconductor
 		elif ppar.make_1D_NLeft_1D_N_2D_S_2D_SMiddle_No_NRight:	# make 1D N-N(S) function to calibrate, where S is a 2D SC Hamiltonian that should induce the gap in the middle N
 			sys = make_1D_Nleft_1D_N_2D_S_2D_SMiddle_No_NRight(p,ppar)
-		else:
-			sys = make_1D_system(p,ppar)						# make 1D N-S-N system, where middle S is the effective Hamiltonian of the proximitized semiconductor, and there is no middle S lead, meaning that conductances above the gap obrained in this model are not accurate, as modes should in the real physical system have been able to escape through the middle S lead above the gap (where the middle S has available quasiparticle excitations).
-
+		
 	else:
 		"""Function building superconductor for parameters in SimpleNamespace object p."""
 		sys = kwant.Builder()

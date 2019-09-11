@@ -125,9 +125,46 @@ This script makes use of the following library and data :
 #### Figure : 
 ####            8.5 - Line-cut of the in-gap conductance calculated for the same system as in the main results, but now using Kwant. 
 
-####		The discretization is chosen differently, partially due to computational cost, but also because the point in this figure was to demonstrate
-####				G_LR^asym(V) = G_LL^asym(V)
-####		which should be independent of the validity of the tight-binding approximation.
-####		Discretization parameters used :  
-####				N = 60 sites, Length=1500 nm, inter-site distance = 25 nm.
+The discretization is chosen differently, partially due to computational cost, but also because the point in this figure was to demonstrate
+	G_LR^asym(V) = G_LL^asym(V)
+which should be independent of the validity of the tight-binding approximation.
+Discretization parameters used :  
+	N = 60 sites, Length=1500 nm, inter-site distance = 25 nm.
 
+To plot the figure from already generated data, run the script :
+	Source_code/Three-terminal_Kwant_method/expsys_v16_webv01.py
+
+This script generates several figures:
+
+	N-SC_sys.pdf			 - a plot of the graph for the system
+	energies_mu_Nx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1_.pdf
+					 - the eigenenergies versus the chemical potential
+	G_11_vsEbias1mu_Nx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1__SymLogNorm.pdf
+					 - local total conductance
+	G_12_vsEbias1mu_Nx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1__SymLogNorm.pdf
+					 - nonlocal total conductance
+	G_11_S_vsEbias1mu_Nx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1__SymLogNorm.pdf
+					 - symmetric component of local conductance
+	G_11_A_vsEbias1mu_Nx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1__SymLogNorm.pdf
+					 - antisymmetric conponent of local conductance
+	G_12_S_vsEbias1mu_Nx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1__SymLogNorm.pdf
+					 - symmetric component of nonlocal conductance
+	G_12_A_vsEbias1mu_Nx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1__SymLogNorm.pdf
+					 - antisymmetric component of nonlocal conductance
+	G_11_12_mu_0_vs_biasNx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1_.pdf
+					 - line-cut in the total local and the total nonlocal differential conductances, at a chemical potential of 0.8 meV (the 667'th element of the 1001 long chemical potential-axis, in this particular example data). 
+	G_11_12_A_S_mu_0_vs_bias.pdf
+					 - line-cut of the symmetry-decomposed local and nonlocal differential conductances. Zooming in around zero bias in this plot, you get figure 8.5.
+
+			
+The corresponding arrays containing the data for the energies is :
+
+	Evsmu_Nx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1_.npy
+
+The eigenvectors are given in :
+
+	Eigenvectorsvsmu_Nx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1_.npy
+
+The corresponding arrays containing the data for the conductances :
+
+	The names are identical, except for the file-type. Substitute ".pdf" for ".npy" in the above.

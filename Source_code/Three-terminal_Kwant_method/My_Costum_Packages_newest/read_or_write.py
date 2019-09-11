@@ -20,7 +20,13 @@ def write_var(ppar,var,var_extra_title_str):
 	np.save(filename_,var)	# file extension automatically .npy
 	# print("%s: -saved datalog file %s" %(misc.round_time(datetime.datetime.now(),round_to=60),(filename_ + ".npy")))
 
+def write_var_2(ppar,var,var_extra_title_str):
+	
+	"""Writing log to file outfile with filename skeleton ppar.filename_2"""
+	
+	filename_ = var_extra_title_str + ppar.filename_2
 
+	np.save(filename_,var)
 
 
 def read_or_write_G_11_12_S_A_var(sys,par,ppar,generating_G_11_12_S_A_var,biasenergies_asymm,var_name,filename_11,filename_12,filename_11_S,filename_11_A,filename_12_S,filename_12_A):
@@ -130,11 +136,17 @@ def read_or_write_energies_Ez(sys,par,ppar,*args):
 			par.energies_Ez.append(evals)
 			par.eigenvectors_Ez.append(evecs)
 
-		write_var(ppar,var=par.energies_Ez,var_extra_title_str="EvsEz_")
-		print("%s: saved datalog file %s" %(misc.round_time(datetime.datetime.now(),round_to=60),("EvsEz_" + ppar.filename + ".npy")))
-		write_var(ppar,var=par.eigenvectors_Ez,var_extra_title_str="EigenvectorsvsEz_")
-		print("%s: saved datalog file %s" %(misc.round_time(datetime.datetime.now(),round_to=60),("EigenvectorsvsEz_" + ppar.filename + ".npy")))		
-			
+		if ppar.doubleres== False:
+			write_var(ppar,var=par.energies_Ez,var_extra_title_str="EvsEz_")
+			print("%s: saved datalog file %s" %(misc.round_time(datetime.datetime.now(),round_to=60),("EvsEz_" + ppar.filename + ".npy")))
+			write_var(ppar,var=par.eigenvectors_Ez,var_extra_title_str="EigenvectorsvsEz_")
+			print("%s: saved datalog file %s" %(misc.round_time(datetime.datetime.now(),round_to=60),("EigenvectorsvsEz_" + ppar.filename + ".npy")))		
+		else:
+			write_var_2(ppar,var=par.energies_Ez,var_extra_title_str="EvsEz_")
+			print("%s: saved datalog file %s" %(misc.round_time(datetime.datetime.now(),round_to=60),("EvsEz_" + ppar.filename + ".npy")))
+			write_var_2(ppar,var=par.eigenvectors_Ez,var_extra_title_str="EigenvectorsvsEz_")
+			print("%s: saved datalog file %s" %(misc.round_time(datetime.datetime.now(),round_to=60),("EigenvectorsvsEz_" + ppar.filename + ".npy")))	
+
 
 def read_or_write_energies_mu(sys,par,ppar):
 	"""
@@ -149,60 +161,36 @@ def read_or_write_energies_mu(sys,par,ppar):
 
 	if ppar.generate_En_mu == False:
 
-		par.energies_mu = np.load("Evsmu_" + ppar.filename + ".npy")
-		print(" - loaded Evsmu datalog file")
-		if ppar.Eonly == True:
-			pass
+		if ppar.doubleres==False:
+			par.energies_mu = np.load("Evsmu_" + ppar.filename + ".npy")
+			print(" - loaded Evsmu datalog file")
+			if ppar.Eonly == True:
+				pass
+			else:
+				par.eigenvectors_mu = np.load("Eigenvectorsvsmu_" + ppar.filename + ".npy")
+				print(" - loaded Eigenvectorsvsmu datalog file")
 		else:
-			par.eigenvectors_mu = np.load("Eigenvectorsvsmu_" + ppar.filename + ".npy")
-			print(" - loaded Eigenvectorsvsmu datalog file")
+			par.energies_mu = np.load("Evsmu_" + ppar.filename_2 + ".npy")
+			print(" - loaded Evsmu datalog file")
+			if ppar.Eonly == True:
+				pass
+			else:
+				par.eigenvectors_mu = np.load("Eigenvectorsvsmu_" + ppar.filename_2 + ".npy")
+				print(" - loaded Eigenvectorsvsmu datalog file")
 
 	else:
-		if ppar.pincher_SC_lead == True:
-			par.energies_mu = []
-			par.eigenvectors_mu = []#np.zeros((len(par.mu_values),par.k))
-			for par.mu, i in zip(par.mu_values,range(len(par.mu_values))):
-		
-				print(" - mu-value number:", i)
-				
-				sites_of_N_wire_only = [site for site in range(0,par.Ny)]
-				sites_of_S_wire_only = [site for site in range(par.Ny,2*par.Ny)]
-				print(" - sites of N wire only is: ", sites_of_N_wire_only)
-				print(" - sites of S wire only is: ", sites_of_S_wire_only)
-				H = sys.hamiltonian_submatrix(args=[par],sparse=True) # !!!???[2],from_sites=sites_of_N_wire_only,to_sites=sites_of_N_wire_only)
-				# H = sys.hamiltonian_submatrix(args=[par],sparse=True,from_sites=sites_of_S_wire_only,to_sites=sites_of_S_wire_only)
-				H = H.tocsc()
-				eigs = scipy.sparse.linalg.eigsh(H,k=par.k,sigma=0)
+		calc.calc_energies_mu(sys,par,ppar)
 
-				sorting_indices = eigs[0].argsort()
-				evals = eigs[0][sorting_indices]
-				evecs = eigs[1][:,sorting_indices]
-				
-				par.energies_mu.append(evals)
-				par.eigenvectors_mu.append(evecs)
-		else:
-			par.energies_mu = []
-			par.eigenvectors_mu = []#np.zeros((len(par.mu_values),par.k))
-			for par.mu, i in zip(par.mu_values,range(len(par.mu_values))):
-		
-				print(" - mu-value number:", i)
-		
-				H = sys.hamiltonian_submatrix(args=[par],sparse=True)
-				H = H.tocsc()
-				eigs = scipy.sparse.linalg.eigsh(H,k=par.k,sigma=0)
-
-				sorting_indices = eigs[0].argsort()
-				evals = eigs[0][sorting_indices]
-				evecs = eigs[1][:,sorting_indices]
-				
-				par.energies_mu.append(evals)
-				par.eigenvectors_mu.append(evecs)
-
+	if ppar.doubleres == False:
 		write_var(ppar,var=par.energies_mu,var_extra_title_str="Evsmu_")
 		print("%s: - saved Evsmu datalog file" %(misc.round_time(datetime.datetime.now(),round_to=60)))
 		write_var(ppar,var=par.eigenvectors_mu,var_extra_title_str="Eigenvectorsvsmu_")
 		print("%s: - saved Eigenvectorsvsmu datalog file" %(misc.round_time(datetime.datetime.now(),round_to=60)))		
-
+	else:
+		write_var_2(ppar,var=par.energies_mu,var_extra_title_str="Evsmu_")
+		print("%s: - saved Evsmu datalog file" %(misc.round_time(datetime.datetime.now(),round_to=60)))
+		write_var_2(ppar,var=par.eigenvectors_mu,var_extra_title_str="Eigenvectorsvsmu_")
+		print("%s: - saved Eigenvectorsvsmu datalog file" %(misc.round_time(datetime.datetime.now(),round_to=60)))	
 
 def read_or_write_energies_biasenergies(sys,par,ppar):
 	"""
@@ -283,16 +271,27 @@ def read_or_write_g012a_mu(sys,par,ppar):
 		# if not doing anything with g0_12_a
 		pass
 	else:
+		if ppar.doubleres == True:
+			mu_values_ = par.mu_values_2
+			biasenergies_ = par.biasenergies_2
+			filename_ = ppar.filename_2
+			var_values_str_ = "mu_values_2"
+		else:
+			mu_values_ = par.mu_values
+			biasenergies_ = par.biasenergies
+			filename_ = ppar.filename
+			var_values_str_ = "mu_values"
+
 		if ppar.generating_g012a[0] == True:
-			g0_12_a = calc.calc_g0_12_asymm(sys, par, lambda_=par.mu_values, t_L=par.t_pincher, t_R=par.t_pincher, omega=par.biasenergies, En=par.energies_mu[:,ppar.n[0]], evec_n=par.eigenvectors_mu[:,:,ppar.n[0]],filename=ppar.filename)
+			g0_12_a = calc.calc_g0_12_asymm(sys, par, ppar, lambda_=mu_values_, t_L=par.t_pincher, t_R=par.t_pincher, omega=biasenergies_, En=par.energies_mu[:,ppar.n[0]], evec_n=par.eigenvectors_mu[:,:,ppar.n[0]],filename=ppar.filename)
 			if ppar.generating_g012a[1] == True and len(ppar.generating_g012a) == 2:
 				# plotting conductance only
-				plot.plot_map(np.transpose(g0_12_a),par.mu_values,par.biasenergies,"g0_12_asym_"+ppar.filename+".pdf","$g_{12,a}$","$\mu\ [meV]$","$E_{bias}\ [meV]$","seismic")
+				plot.plot_map(np.transpose(g0_12_a),mu_values_,biasenergies_,"g0_12_asym_"+filename_+".pdf","$g_{12,a}$","$\mu\ [meV]$","$E_{bias}\ [meV]$","seismic")
 			elif ppar.generating_g012a[1] == True and len(ppar.generating_g012a) == 3:
 				# plotting conductance together with energies and Cooper charges of nth and n'th eigenstates
 				legend = ["$E_1\, [meV]$","$E_{-1}\, [meV]$","$(u^2_1-v^2_1)$","$(u^2_{-1}-v^2_{-1})$"]
 
-				plot.plot_G_ij_var(par,scaling="Linear",G_ij=np.transpose(g0_12_a),var_values_str="mu_values",filename="g012a_nus_vsEbimu_seis_"+ppar.filename,figtitle="$g^0_{12,a}\ [e^2/h]$",xlabel="$\mu\ [meV]$",ylabel="$E_{bias}$",cm="seismic",u2mv2_factor=np.abs(np.max(par.E1_mu))/np.abs(np.max(par.u2mv2_E1_mu)),var_values_=par.mu_values, E1_var=par.E1_mu, Em1_var=par.Em1_mu, u2mv2_E1_var=par.u2mv2_E1_mu, u2mv2_Em1_var=par.u2mv2_Em1_mu,legend=legend)
+				plot.plot_G_ij_var(par,scaling="Linear",G_ij=np.transpose(g0_12_a),var_values_str=var_values_str_,filename="g012a_nus_vsEbimu_seis_"+filename_,figtitle="$g^0_{12,a}\ [e^2/h]$",xlabel="$\mu\ [meV]$",ylabel="$E_{bias}\ [meV]$",cm="seismic",u2mv2_factor=np.abs(np.max(par.E1_mu))/np.abs(np.max(par.u2mv2_E1_mu)),var_values_=mu_values_, E1_var=par.E1_mu, Em1_var=par.Em1_mu, u2mv2_E1_var=par.u2mv2_E1_mu, u2mv2_Em1_var=par.u2mv2_Em1_mu,legend=legend)
 
 		elif ppar.generating_g012a[0] == False:
 			g0_12_a = np.load("g0_12_asym_"+ppar.filename+".npy")
@@ -307,7 +306,7 @@ def read_or_write_g012a_Ez(sys,par,ppar):
 		pass
 	else:
 		if ppar.generating_g012a[0] == True:
-			g0_12_a = calc.calc_g0_12_asymm(sys, par, lambda_=par.Ez_values, t_L=par.t_pincher, t_R=par.t_pincher, omega=par.biasenergies, En=par.energies_Ez[:,ppar.n[0]], evec_n=par.eigenvectors_Ez[:,:,ppar.n[0]],filename=ppar.filename)
+			g0_12_a = calc.calc_g0_12_asymm(sys, par, ppar, lambda_=par.Ez_values, t_L=par.t_pincher, t_R=par.t_pincher, omega=par.biasenergies, En=par.energies_Ez[:,ppar.n[0]], evec_n=par.eigenvectors_Ez[:,:,ppar.n[0]],filename=ppar.filename)
 			if ppar.generating_g012a[1] == True and len(ppar.generating_g012a) == 2:
 				# plotting conductance only
 				plot.plot_map(np.transpose(g0_12_a),par.Ez_values,par.biasenergies,"g0_12_asym_"+ppar.filename+".pdf","$g_{12,a}$","$E_z\ [meV]$","$E_{bias}\ [meV]$","seismic")
@@ -325,28 +324,64 @@ def read_or_write_g012a_Ez(sys,par,ppar):
 
 
 def read_or_write_u2mv2_u2_v2(par,ppar):
+	if ppar.doubleres == True:
+		filename_ = ppar.filename_2
+	else:
+		filename_ = ppar.filename
 
 	if ppar.generate_E1m1_mu == True:
+		if ppar.doubleres == False:
+			par.u2mv2_1_mu, par.u2_1_mu, par.v2_1_mu, par.u2_mu_sites_1, par.v2_mu_sites_1 = calc.calc_u2mv2_mu(par.evec1_mu, par.mu_values, par.Ny, filename_ = "1_"+filename_+".npy", filename="u2mv2_E1_vs_mu_"+ppar.filename+".npy")
+			par.u2mv2_m1_mu, par.u2_m1_mu, par.v2_m1_mu, par.u2_mu_sites_m1, par.v2_mu_sites_m1 = calc.calc_u2mv2_mu(par.evecm1_mu, par.mu_values, par.Ny, filename_ = "m1_"+filename_+".npy", filename="u2mv2_Em1_vs_mu_"+ppar.filename+".npy")
 
-		par.u2mv2_1_mu, par.u2_1_mu, par.v2_1_mu = calc.calc_u2mv2_mu(par.evec1_mu, par.mu_values, par.Ny, filename="u2mv2_E1_vs_mu_"+ppar.filename+".npy")
-		par.u2mv2_m1_mu, par.u2_m1_mu, par.v2_m1_mu = calc.calc_u2mv2_mu(par.evecm1_mu, par.mu_values, par.Ny, filename="u2mv2_Em1_vs_mu_"+ppar.filename+".npy")
+			np.save("u2_E1_vs_mu_" + ppar.filename + ".npy",par.u2_1_mu)
+			np.save("v2_E1_vs_mu_" + ppar.filename + ".npy",par.v2_1_mu)
 
-		np.save("u2_E1_vs_mu_" + ppar.filename + ".npy",par.u2_1_mu)
-		np.save("v2_E1_vs_mu_" + ppar.filename + ".npy",par.v2_1_mu)
+			np.save("u2_Em1_vs_mu_" + ppar.filename + ".npy",par.u2_m1_mu)
+			np.save("v2_Em1_vs_mu_" + ppar.filename + ".npy",par.v2_m1_mu)
+			print(" - u2mv2 etc. vs. mu files saved (same res as conductances)")
+		else:
+			par.u2mv2_1_mu, par.u2_1_mu, par.v2_1_mu, par.u2_mu_sites_1, par.v2_mu_sites_1  = calc.calc_u2mv2_mu(par.evec1_mu, par.mu_values_2, par.Ny, filename_ = "1_"+filename_+".npy", filename="u2mv2_E1_vs_mu_"+ppar.filename_2+".npy")
+			par.u2mv2_m1_mu, par.u2_m1_mu, par.v2_m1_mu, par.u2_mu_sites_m1, par.v2_mu_sites_m1 = calc.calc_u2mv2_mu(par.evecm1_mu, par.mu_values_2, par.Ny, filename_ = "m1_"+filename_+".npy", filename="u2mv2_Em1_vs_mu_"+ppar.filename_2+".npy")
 
-		np.save("u2_Em1_vs_mu_" + ppar.filename + ".npy",par.u2_m1_mu)
-		np.save("v2_Em1_vs_mu_" + ppar.filename + ".npy",par.v2_m1_mu)
-		print(" - u2mv2 etc. vs. mu files saved")
+			np.save("u2_E1_vs_mu_" + ppar.filename_2 + ".npy",par.u2_1_mu)
+			np.save("v2_E1_vs_mu_" + ppar.filename_2 + ".npy",par.v2_1_mu)
+
+			np.save("u2_Em1_vs_mu_" + ppar.filename_2 + ".npy",par.u2_m1_mu)
+			np.save("v2_Em1_vs_mu_" + ppar.filename_2 + ".npy",par.v2_m1_mu)
+			print(" - u2mv2 etc. vs. mu files saved (different res from conductances)")
+
 	elif ppar.generate_E1m1_mu == False:
-		par.u2mv2_E1_mu = np.load("u2mv2_E1_vs_mu_"+ppar.filename+".npy")
-		par.u2mv2_Em1_mu = np.load("u2mv2_Em1_vs_mu_"+ppar.filename+".npy")
+		if ppar.doubleres == False:
+			par.u2mv2_E1_mu = np.load("u2mv2_E1_vs_mu_"+ppar.filename+".npy")
+			par.u2mv2_Em1_mu = np.load("u2mv2_Em1_vs_mu_"+ppar.filename+".npy")
 
-		par.u2_E1_mu = np.load("u2_E1_vs_mu_" + ppar.filename + ".npy")
-		par.v2_E1_mu = np.load("v2_E1_vs_mu_" + ppar.filename + ".npy")
+			par.u2_E1_mu = np.load("u2_E1_vs_mu_" + ppar.filename + ".npy")
+			par.v2_E1_mu = np.load("v2_E1_vs_mu_" + ppar.filename + ".npy")
 
-		par.u2_Em1_mu = np.load("u2_Em1_vs_mu_" + ppar.filename + ".npy")
-		par.v2_Em1_mu = np.load("v2_Em1_vs_mu_" + ppar.filename + ".npy")
-		print(" - u2mv2 etc. vs. mu files loaded")
+			par.u2_Em1_mu = np.load("u2_Em1_vs_mu_" + ppar.filename + ".npy")
+			par.v2_Em1_mu = np.load("v2_Em1_vs_mu_" + ppar.filename + ".npy")
+
+			print(" - u2mv2 etc. vs. mu files loaded (same res as conductances)")
+		else:
+			par.u2mv2_E1_mu = np.load("u2mv2_E1_vs_mu_"+ppar.filename_2+".npy")
+			par.u2mv2_Em1_mu = np.load("u2mv2_Em1_vs_mu_"+ppar.filename_2+".npy")
+
+			par.u2_E1_mu = np.load("u2_E1_vs_mu_" + ppar.filename_2 + ".npy")
+			par.v2_E1_mu = np.load("v2_E1_vs_mu_" + ppar.filename_2 + ".npy")
+
+			par.u2_Em1_mu = np.load("u2_Em1_vs_mu_" + ppar.filename_2 + ".npy")
+			par.v2_Em1_mu = np.load("v2_Em1_vs_mu_" + ppar.filename_2 + ".npy")
+
+			print(" - u2mv2 etc. vs. mu files loaded (different res from conductances)")
+
+		# Note: filename_ already defined depending on whether ppar.doubleres is True or False	
+		par.u2_mu_sites_1 = np.load("u2_mu_sites_1_"+filename_+".npy")
+		par.v2_mu_sites_1 = np.load("v2_mu_sites_1_"+filename_+".npy")
+
+		par.u2_mu_sites_m1 = np.load("u2_mu_sites_m1_"+filename_+".npy")
+		par.v2_mu_sites_m1 = np.load("v2_mu_sites_m1_"+filename_+".npy")
+
 	elif ppar.generate_E1m1_mu == None:
 		pass
 
@@ -354,40 +389,85 @@ def read_or_write_u2mv2_u2_v2(par,ppar):
 		par.u2mv2_1_Ez, par.u2_1_Ez, par.v2_1_Ez = calc.calc_u2mv2_var(par.evec1_Ez, var_values=par.Ez_values, Ny=par.Ny, filename="E1_vs_Ez_"+ppar.filename+".npy", savefiles=True)
 		par.u2mv2_m1_Ez, par.u2_m1_Ez, par.v2_m1_Ez = calc.calc_u2mv2_var(par.evecm1_Ez, var_values=par.Ez_values, Ny=par.Ny, filename="Em1_vs_Ez_"+ppar.filename+".npy", savefiles=True)
 
-		np.save("u2_E1_vs_Ez_" + ppar.filename + ".npy",par.u2_1_Ez)
-		np.save("v2_E1_vs_Ez_" + ppar.filename + ".npy",par.v2_1_Ez)
+		if ppar.doubleres == False:
+			np.save("u2_E1_vs_Ez_" + ppar.filename + ".npy",par.u2_1_Ez)
+			np.save("v2_E1_vs_Ez_" + ppar.filename + ".npy",par.v2_1_Ez)
 
-		np.save("u2_Em1_vs_Ez_" + ppar.filename + ".npy",par.u2_m1_Ez)
-		np.save("v2_Em1_vs_Ez_" + ppar.filename + ".npy",par.v2_m1_Ez)
-		print(" - u2mv2 etc. vs. Ez files saved")
+			np.save("u2_Em1_vs_Ez_" + ppar.filename + ".npy",par.u2_m1_Ez)
+			np.save("v2_Em1_vs_Ez_" + ppar.filename + ".npy",par.v2_m1_Ez)
+			print(" - u2mv2 etc. vs. Ez files saved (same res as conductances)")
+		else:
+			np.save("u2_E1_vs_Ez_" + ppar.filename_2 + ".npy",par.u2_1_Ez)
+			np.save("v2_E1_vs_Ez_" + ppar.filename_2 + ".npy",par.v2_1_Ez)
+
+			np.save("u2_Em1_vs_Ez_" + ppar.filename_2 + ".npy",par.u2_m1_Ez)
+			np.save("v2_Em1_vs_Ez_" + ppar.filename_2 + ".npy",par.v2_m1_Ez)
+			print(" - u2mv2 etc. vs. Ez files saved (different res from conductances)")
+
 	elif ppar.generate_E1m1_Ez == False:
-		par.u2mv2_E1_Ez = np.load("u2mv2_E1_vs_Ez_"+ppar.filename+".npy")
-		par.u2mv2_Em1_Ez = np.load("u2mv2_Em1_vs_Ez_"+ppar.filename+".npy")
+		if ppar.doubleres == False:
+			par.u2mv2_E1_Ez = np.load("u2mv2_E1_vs_Ez_"+ppar.filename+".npy")
+			par.u2mv2_Em1_Ez = np.load("u2mv2_Em1_vs_Ez_"+ppar.filename+".npy")
 
-		par.u2_E1_Ez = np.load("u2_E1_vs_Ez_" + ppar.filename + ".npy")
-		par.v2_E1_Ez = np.load("v2_E1_vs_Ez_" + ppar.filename + ".npy")
+			par.u2_E1_Ez = np.load("u2_E1_vs_Ez_" + ppar.filename + ".npy")
+			par.v2_E1_Ez = np.load("v2_E1_vs_Ez_" + ppar.filename + ".npy")
 
-		par.u2_Em1_Ez = np.load("u2_Em1_vs_Ez_" + ppar.filename + ".npy")
-		par.v2_Em1_Ez = np.load("v2_Em1_vs_Ez_" + ppar.filename + ".npy")
-		print(" - u2mv2 etc. vs. Ez files loaded")
+			par.u2_Em1_Ez = np.load("u2_Em1_vs_Ez_" + ppar.filename + ".npy")
+			par.v2_Em1_Ez = np.load("v2_Em1_vs_Ez_" + ppar.filename + ".npy")
+			print(" - u2mv2 etc. vs. Ez files loaded (same res as conductances)")
+		else:
+			par.u2mv2_E1_Ez = np.load("u2mv2_E1_vs_Ez_"+ppar.filename_2+".npy")
+			par.u2mv2_Em1_Ez = np.load("u2mv2_Em1_vs_Ez_"+ppar.filename_2+".npy")
+
+			par.u2_E1_Ez = np.load("u2_E1_vs_Ez_" + ppar.filename_2 + ".npy")
+			par.v2_E1_Ez = np.load("v2_E1_vs_Ez_" + ppar.filename_2 + ".npy")
+
+			par.u2_Em1_Ez = np.load("u2_Em1_vs_Ez_" + ppar.filename_2 + ".npy")
+			par.v2_Em1_Ez = np.load("v2_Em1_vs_Ez_" + ppar.filename_2 + ".npy")
+			print(" - u2mv2 etc. vs. Ez files loaded (different res from conductances)")
 
 
 def read_or_write_E1m1(par,ppar):
 	"""
 	Function reading or writing values for E1 and Em1 for par and ppar for the desired variable(s), mu or Ez in this current implementation.
+
+	Parameters:
+	-----------
+	ppar.generate_E1m1_mu: 	Boolean.
+
+	ppar.generate_E1m1_Ez: 	Boolean.
+
 	"""
 
-	if ppar.generate_E1m1_mu == True:
-		par.E1_mu, par.Em1_mu, par.evec1_mu, par.evecm1_mu = calc.calc_E1_Em1_from_E0_E0prime_mu(E0 = par.energies_mu[:,ppar.n[0]], E0prime = par.energies_mu[:,ppar.n[1]], evec0 = par.eigenvectors_mu[:,:,ppar.n[0]], evec0prime = par.eigenvectors_mu[:,:,ppar.n[1]], mu_values = par.mu_values,N=4*par.Ny)
+	if ppar.doubleres == False:
+		pass
+	else:
+		mu_values_ = par.mu_values_2
+	print(" - shape of evec0prime = ", np.shape(par.eigenvectors_mu[:,:,ppar.n[1]]))
+	print(" - shape of eigenvectors_mu = ", np.shape(par.eigenvectors_mu))
+	print(" - shape of energies_mu = ", np.shape(par.energies_mu))
 
-		np.save("E1_vs_mu_" + ppar.filename + ".npy", par.E1_mu)
-		np.save("Em1_vs_mu_" + ppar.filename + ".npy", par.Em1_mu)
-		print(" - E1_vs_mu and Em1_vs_mu files saved")
+	if ppar.generate_E1m1_mu == True:
+
+		par.E1_mu, par.Em1_mu, par.evec1_mu, par.evecm1_mu = calc.calc_E1_Em1_from_E0_E0prime_var(E0 = par.energies_mu[:,ppar.n[0]], E0prime = par.energies_mu[:,ppar.n[1]], evec0 = par.eigenvectors_mu[:,:,ppar.n[0]], evec0prime = par.eigenvectors_mu[:,:,ppar.n[1]], var_values = mu_values_,N=par.N,filename="vs_mu_"+ppar.filename,savefiles=False) # N: because 4 DOFs at each 'site'
+		if ppar.doubleres == False:
+			np.save("E1_vs_mu_" + ppar.filename + ".npy", par.E1_mu)
+			np.save("Em1_vs_mu_" + ppar.filename + ".npy", par.Em1_mu)
+			print(" - E1_vs_mu and Em1_vs_mu files saved")
+		else:
+			np.save("E1_vs_mu_" + ppar.filename_2 + ".npy", par.E1_mu)
+			np.save("Em1_vs_mu_" + ppar.filename_2 + ".npy", par.Em1_mu)
+			print(" - E1_vs_mu and Em1_vs_mu files saved")
 
 	elif ppar.generate_E1m1_mu == False:
-		par.E1_mu = np.load("E1_vs_mu_" + ppar.filename + ".npy")
-		par.Em1_mu = np.load("Em1_vs_mu_" + ppar.filename + ".npy")
-		print(" - E1_vs_mu and Em1_vs_Ez files loaded")
+		if ppar.doubleres == False:
+			par.E1_mu = np.load("E1_vs_mu_" + ppar.filename + ".npy")
+			par.Em1_mu = np.load("Em1_vs_mu_" + ppar.filename + ".npy")
+			print(" - E1_vs_mu and Em1_vs_Ez files loaded")
+		else:
+			par.E1_mu = np.load("E1_vs_mu_" + ppar.filename_2 + ".npy")
+			par.Em1_mu = np.load("Em1_vs_mu_" + ppar.filename_2 + ".npy")
+			print(" - E1_vs_mu and Em1_vs_Ez files loaded")
 	elif ppar.generate_E1m1_mu == None:
 		pass
 
