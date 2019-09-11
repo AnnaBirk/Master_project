@@ -363,7 +363,7 @@ def plot_G_ij_var(par,scaling,G_ij,var_values_str,filename,figtitle,xlabel,ylabe
 	ax.ticklabel_format(style='sci',scilimits=(-3,4))
 
 	# fig.tight_layout()
-	fig.subplots_adjust(left=0.19, bottom=0.15, right=0.93)
+	fig.subplots_adjust(left=0.19, bottom=0.16, right=0.93)
 
 	cb.ax.tick_params(labelsize=12)
 

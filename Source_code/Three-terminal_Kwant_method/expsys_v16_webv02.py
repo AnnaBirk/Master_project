@@ -153,7 +153,7 @@ def main_En_gG12A(ppar):
 		mu_cut_index = 667
 		G_full_absmax = np.max(np.abs(par.G_11_mu[mu_cut_index,:],par.G_12_mu[mu_cut_index,:]))
 		
-		plot.plot_G_1_G_2_varconst(par,G_1=par.G_11_mu,G_2=par.G_12_mu,index_of_varconst=mu_cut_index,filename="G_11_12_mu_0_vs_bias"+ppar.filename,figtitle=" ",xlabel=r"$V\ [meV]$",ylabel=r"$G_{\alpha \beta}^0(V)\ [e^2/h]$",legend=[r"$G_{LL}^0$", r"$G_{LR}^0$"],ylim=[-1.1*G_full_absmax,1.1*G_full_absmax],colors = ['--k',"C0"])
+		plot.plot_G_1_G_2_varconst(par,G_1=par.G_11_mu,G_2=par.G_12_S_mu+par.G_12_A_mu,index_of_varconst=mu_cut_index,filename="G_11_12_mu_0_vs_bias"+ppar.filename,figtitle=" ",xlabel=r"$V\ [meV]$",ylabel=r"$G_{\alpha \beta}^0(V)\ [e^2/h]$",legend=[r"$G_{LL}^0$", r"$G_{LR}^0$"],ylim=[-1.1*G_full_absmax,1.1*G_full_absmax],colors = ['--k',"C0"])
  	
 		plot.plot_G_1_G_2_varconst(par,
 				G_1=par.G_12_S_mu,G_2=par.G_12_A_mu,
