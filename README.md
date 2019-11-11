@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/192598166.svg)](https://zenodo.org/badge/latestdoi/192598166)
 
-## Thesis title: Local and nonlocal differential conductance spectroscopy of Andreev bound states in three-terminal superconducting devices 
+## Thesis title: Local and nonlocal differential conductance spectroscopy of Andreev bound states in three-terminal superconducting devices
 
 ### Chapter 3
 
