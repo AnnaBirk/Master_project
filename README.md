@@ -122,9 +122,7 @@ This script makes use of the following library and data :
 
     versus the chemical potential and the magnetic field, respectively.
 
-#### Figure
-
-#### 8.5 - Line-cut of the in-gap conductance calculated for the same system as in the main results, but now using Kwant
+#### Figure 8.5 - Line-cut of the in-gap conductance calculated for the same system as in the main results, but now using Kwant
 
 The discretization is chosen differently, partially due to computational cost, but also because the point in this figure was to demonstrate
 
