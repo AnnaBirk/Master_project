@@ -1,10 +1,8 @@
 [![DOI](https://zenodo.org/badge/192598166.svg)](https://zenodo.org/badge/latestdoi/192598166)
 
 # Python and Mathematica scripts used in Master thesis
-<<<<<<< HEAD
-=======
+
 ## Thesis title: Local and nonlocal differential conductance spectroscopy of Andreev bound states in three-terminal superconducting devices 
->>>>>>> f191a2c1a01825dec7089d2a32cc46eda2a85733
 
 ## Thesis title: Localand nonlocal differential conductance spectroscopy of Andreev bound states in three-terminal superconducting devices  
 
