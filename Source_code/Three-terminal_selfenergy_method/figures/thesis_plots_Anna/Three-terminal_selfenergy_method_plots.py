@@ -1,13 +1,15 @@
-
+"""
+Plotting already generated data for self-energy model of three-terminal device,
+using functions from the module thesis_plot_library.
+"""
 
 from thesis_plot_library.thesis_plot_library import *
-
 import sys
 from pathlib import Path
 sys.path.append(str(Path('.').absolute().parent))
 sys.path.append('../../')
 
-############################ plot Asymmetric differential conductances: ##############################
+########## Plot Asymmetric differential conductances: ##########
 var = "mu"
 var_2 = "b"
 filepath = "wire_101/sites=800/length=1.5/alpha=0.280204287582202eVA/Delta_ind=180"
@@ -63,7 +65,8 @@ fig.show()
 
 
 
-#################################### PLOTTING WAVEFUNCTION/SPIN POLARIZATION/CHARGE as function of lattice sites in real space #################################
+###########     PLOTTING WAVEFUNCTION/SPIN POLARIZATION/CHARGE 
+#               as function of lattice sites in real space      ###########
 var = "mu"
 var_2 = "b"
 filepath = "wire_101/sites=800/length=1.5/alpha=0.280204287582202eVA/Delta_ind=180"
@@ -107,7 +110,11 @@ mu_domain = 317
 
 
 """ 
-'Cutting and pasting' lowest-energy modes (before : one of the energies is always positive, the other always negative. After : two energies what moth oscillate, out of phase, around zero energy) 
+'Cutting and pasting' lowest-energy modes 
+(Notes
+ -----
+ Before : one of the energies is always positive, the other always negative. 
+ After : two energies what moth oscillate, out of phase, around zero energy) 
 """
 E0_mu, Em0_mu, wf_mu[:,:,:,0], wf_mu[:,:,:,1] = calc_E1_Em1_from_E0_E0prime_var(E0_mu[:], data_mu["energies"][:,1][:],mu[:], evecs = [wf_mu[:,:,:,0], wf_mu[:,:,:,1]])
 
@@ -162,7 +169,8 @@ fig, ax, fig_spin, fig_Q, wf2_P_l_A_L_mu_b, spin_P_l_A_L_mu_b, Q_P_l_A_L_mu_b = 
 
 
 
-#################################### PLOTTING TRACES of conductances along the two lowest energies   ####################
+########        PLOTTING TRACES 
+#               of conductances along the two lowest energies   ########
 var = "mu"
 var_2 = "b"
 filepath = "wire_101/sites=800/length=1.5/alpha=0.280204287582202eVA/Delta_ind=180"
@@ -181,7 +189,6 @@ data_mu = np.load(
                  "data/" + filepath_mu + "/data_" + filename_mu + ".npz"
                  )
 
-
 fig,ax, data_phaseshifts = plot_E0_gS_gA_and_QR_dE0_gSovergA_4subplots(   
                                             mu = data_mu["x_range"],
                                             E0_mu = data_mu["E0"],
@@ -194,7 +201,13 @@ fig,ax, data_phaseshifts = plot_E0_gS_gA_and_QR_dE0_gSovergA_4subplots(
                                             gA_b = data_b["G_LR_A"],
                                             QR_b = data_b["QR_E0"]
                                             )
-""" ANNOTATING THE TWO TYPES OF ZEROS OBSERVED IN THE ANTISYMMETRIC CONDUCTANCE (I.E. THE MAXIMA AND MINIMA OF THE CHARGE, WHICH WE HAVE EASILY AVAILABLE FROM DATA_PHASESHIFTS) : """
+
+""" 
+ANNOTATING THE TWO TYPES OF ZEROS 
+OBSERVED IN THE ANTISYMMETRIC CONDUCTANCE 
+(I.E. THE MAXIMA AND MINIMA OF THE CHARGE, 
+WHICH WE HAVE EASILY AVAILABLE FROM DATA_PHASESHIFTS) : 
+"""
 QR_mu_zeros_and_extrema=data_phaseshifts[2]
 star_point = QR_mu_zeros_and_extrema[2]
 triangle_point = QR_mu_zeros_and_extrema[3]
@@ -252,13 +265,16 @@ np.savez("figures/" + filepath + "/thesis_plots_Anna" + "/data_phaseshifts" + ".
                 QR_b_zeros_and_extrema=data_phaseshifts[4], dEdb_zeros_and_extrema=data_phaseshifts[5])
 
 ### SHOWING A LINE-CUT IN THE TRIVIAL REGION TO INVESTIGATE FOURIER SPECTRUM OF THE SIGNAL : ###
-wf2_E0_mu_sum, wf2_E0_b_sum, spinpol_E0_mu, spinpol_E0_b, u2_up_mu, u2_down_mu, v2_up_mu, v2_down_mu, u2_up_b, u2_down_b, v2_up_b, v2_down_b = calc_wf_data(wf_mu, wf_b)
+wf2_E0_mu_sum, wf2_E0_b_sum, spinpol_E0_mu, spinpol_E0_b, \
+                                u2_up_mu, u2_down_mu, v2_up_mu, v2_down_mu, u2_up_b, \
+                                u2_down_b, v2_up_b, v2_down_b
+                                = calc_wf_data(wf_mu, wf_b)
 
 Q_E0_mu = u2_up_mu + u2_down_mu - v2_up_mu - v2_down_mu
 Q_E0_b = u2_up_b + u2_down_b - v2_up_b - v2_down_b
 
-cut_idx = 10
-cut_idx1 = 10
+cut_idx = 10    # index of mu for which to cut
+cut_idx1 = 10   # index of b for which to cut
 
 Pl_mu_wf2, Pl_b_wf2 = wf2_P_l_A_L_mu_b[0], wf2_P_l_A_L_mu_b[1]
 Pl_mu_spin, Pl_b_spin = spin_P_l_A_L_mu_b[0], spin_P_l_A_L_mu_b[1]
