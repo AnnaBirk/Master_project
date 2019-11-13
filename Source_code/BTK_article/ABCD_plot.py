@@ -1,18 +1,22 @@
-""" ABCD caluclation and plot as functions of energy, for different barriers. """
+""" 
+	Program caluclating probabilities in idealized NS junction from BTK article
+	and plotting them as functions of energy, for different barrier strengths. 
+"""
 
 def ABCD_of_E_for_Z(ElD, EgD, Z, Delta):
 	"""
-	Calculating probabilities of Andreev reflection (A), normal reflection (B), transmission with branch-crossing (C), and transmission without branch-crossing (D).
+	Calculating probabilities of Andreev reflection (A), normal reflection (B), 
+	transmission with branch-crossing (C), and transmission without branch-crossing (D).
 
 	Parameters 
 	----------
+	 - Delta : 	superconducting gap
+
 	 - ElD : 	energies less than Delta
 
 	 - EgD : 	energies greater than Delta
 
 	 - Z : 		barrier strength
-
-	 - Delta : 	superconducting gap
 
 	Notes
 	-----
@@ -22,30 +26,38 @@ def ABCD_of_E_for_Z(ElD, EgD, Z, Delta):
 
 	 			where E_k is the quasiparticle excitation energy at momentum k and Delta_k is the superconducting gap.
 
-	 - u2 : 	the electronic amplitude is u. 
+	 - u2 : 	|u|^2, where the electronic amplitude is u. 
 
-	 - v2 : 	the hole amplitude is v. Total probability states
+	 - v2 : 	|v|^2, where the hole amplitude is v. Total probability states
 
 	 				|u|^2 + |v|^2 = 1.
 
-	 - gam2 : 	gamma is a constant introduced in the probability amplitudes obtained in the BTK theory,
+	 - gam2 : 	gamma^2, where gamma is a constant introduced in the probability amplitudes obtained in the BTK theory,
 
 	 				gamma = u^2 + Z^2 (u^2 - v^2).
 
-	 			We may identify u_k^2 - v_k^2 as the charge of the state with momentum k.
+	 			u^2, v^2 are assumed to be positive numbers. 
+				We may identify u_k^2 - v_k^2 as the charge of the state with momentum k.
 
-	 - Probabilities for E < Delta : 	is given by one expression. This is to ensure that the expressions for the probabilities are real numbers. Below this energy in the NS system considered here, no single particle transmission is possible into the superconductor and thus 
+	 - Probabilities for E < Delta : 	
+	 			are given by one expression. 
+	 			This is to ensure that the probabilities are real numbers. 
+				Below this energy in the NS system considered here, no single particle 
+				transmission is possible into the superconductor and thus 
 
-	 										C = D = 0		for E > Delta,
+	 				C = D = 0		for E > Delta,
 
-	 									and the total probability condition reads
+				and the total probability condition reads
 
-	 										A + B = 1.
+					A + B = 1.
 
-	 - Probabilities for E > Delta : 	is given by another expression. Above the gap, C and D are in general non-zero.
+	 - Probabilities for E > Delta : 	
+	 			are given by another expression. Above the gap, C and D are in general non-zero.
 
 	"""
-	A, B, C, D = np.zeros(len(ElD) + len(EgD)), np.zeros(len(ElD) + len(EgD)), np.zeros(len(ElD) + len(EgD)), np.zeros(len(ElD) + len(EgD))
+	A, B, C, D = 	np.zeros(len(ElD) + len(EgD)), np.zeros(len(ElD) + len(EgD)), \
+					np.zeros(len(ElD) + len(EgD)), np.zeros(len(ElD) + len(EgD))
+	
 	xik = np.sqrt(EgD**2 - Delta**2)
 
 	u2 = 0.5 * (1 + xik / EgD)
@@ -78,7 +90,28 @@ def ABCD_of_E_for_Z(ElD, EgD, Z, Delta):
 
 	return A, B, C, D
 
-def plot_ABCD_for_Z(A, B, C, D, energies, size_inches=(2.5,2.), xlim=(0,3), legend=[True, r"$A$", r"$B$", r"$C$", r"$D$"]):
+def plot_ABCD_for_Z(	A, B, C, D, energies, 
+						size_inches=(2.5,2.), 
+						xlim=(0,3), 
+						legend=[True, r"$A$", r"$B$", r"$C$", r"$D$"]):
+
+	""" 
+	Plotting probabilities A, B, C, and D as functions of energy,
+	for a given barrier strength.
+
+	Parameters 
+	----------
+	 - energies : 		array containing the energies for which the probabilities are calculated.
+
+	 - A, B, C, D : 	arrays containing probabilities.
+	 					np.shape(A) = np.shape(B) = np.shape(C) = np.shape(D) = np.shape(energies)
+	
+	 - size_inches : 	tuple containing width and height of the figure in inches.
+
+	 - xlim : 			tuple/list/array containing first and last value in the energy domain to be plotted.
+
+	 - legend : 		list/tuple/array. First value: boolean. If True, a legend is added with the next four elements.
+	"""
 
 	plt.rc('text', usetex=True)
 	font_size = 14
@@ -101,9 +134,9 @@ def plot_ABCD_for_Z(A, B, C, D, energies, size_inches=(2.5,2.), xlim=(0,3), lege
 	ax.set_xticks([0,1,2,3])
 	ax.set_xticklabels(["0", r"$\Delta$"])
 	ax.tick_params(
-                            direction="in",
-                            which = "major"
-                          	)
+					direction="in",
+					which = "major"
+					)
 	if legend[0] == True:
 		ax.legend(legend[1:])
 
@@ -118,21 +151,26 @@ import numpy as np
 
 """ Setting particular parameters : """
 
-Delta = 2	# units irrelevant, measuring energy in units of Delta.
+Delta = 2	# units irrelevant, measuring energy in units of Delta
 N = 10001	# number of points to make energy arrays from
-DD = 3		# factor of how many units - 1 of Delta the energies should take for energies above Delta
+DD = 3		# factor of how many units of Delta the E > Delta array takes
 Z = 3.0		# unitless barrier strength
-ElD = np.linspace(0,Delta,N)				# E < Delta array.
-EgD = np.linspace(Delta,DD*Delta,DD*N)		# E > Delta array.
+ElD = np.linspace(0,Delta,N)				# E < Delta array
+EgD = np.linspace(Delta,DD*Delta,DD*N)		# E > Delta array
 
-""" Calculating probabilities of Andreev reflection, Normal reflection, Transmission with branch-crossing, and transmission without branch-crossing, respectively. """
+""" Calculating probabilities of 
+Andreev reflection, Normal reflection, Transmission with branch-crossing, 
+and transmission without branch-crossing, respectively: """
 
 A, B, C, D = ABCD_of_E_for_Z(ElD, EgD, Z=Z, Delta=Delta)	
 
-import matplotlib.pylab as plt 
+import matplotlib.pylab as plt
 
 """ Plotting A, B, C and D for the given barrier value Z : """
-fig, ax = plot_ABCD_for_Z(A, B, C, D, energies = np.concatenate((ElD/Delta, EgD/Delta), axis=None), xlim = (0, DD), legend = [False])
+fig, ax = plot_ABCD_for_Z(	A, B, C, D, 
+							energies = np.concatenate((ElD/Delta, EgD/Delta), axis=None), 
+							xlim = (0, DD), 
+							legend = [False])
+
 fig.savefig("ABCD_Z=%.1f.pdf" % Z, format="pdf")
 plt.show()
-

@@ -9,7 +9,7 @@
 #### Figures 3.9 and 3.10
 
     Run the script
-        Source_code/Single_Andreev_level_analytical/ABCD_plot.py
+        Source_code/BTK_article/ABCD_plot.py
 
 ### Chapter 6
 

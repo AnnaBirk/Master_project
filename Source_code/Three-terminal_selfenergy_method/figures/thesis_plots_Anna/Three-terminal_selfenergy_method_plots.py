@@ -38,10 +38,14 @@ data_a_b_zoom = np.load(
             "data/" + filepath_b_zoom + "/data_" + filename_b_zoom +  ".npz"
             )
 
-x_range, e_range, diff_cond_a = data_a["x_range"], data_a["e_range"], data_a["diff_cond"]
-x_range_zoom, e_range_zoom, diff_cond_a_zoom = data_a_["x_range"], data_a_["e_range"], data_a_["diff_cond"]
-x_range_2, e_range_2, diff_cond_a_2 = data_a_b["x_range"], data_a_b["e_range"], data_a_b["diff_cond"]
-x_range_2_zoom, e_range_2_zoom, diff_cond_a_2_zoom = data_a_b_zoom["x_range"], data_a_b_zoom["e_range"], data_a_b_zoom["diff_cond"]
+x_range, e_range, diff_cond_a = \
+        data_a["x_range"], data_a["e_range"], data_a["diff_cond"]
+x_range_zoom, e_range_zoom, diff_cond_a_zoom = \
+        data_a_["x_range"], data_a_["e_range"], data_a_["diff_cond"]
+x_range_2, e_range_2, diff_cond_a_2 = \
+        data_a_b["x_range"], data_a_b["e_range"], data_a_b["diff_cond"]
+x_range_2_zoom, e_range_2_zoom, diff_cond_a_2_zoom = \
+        data_a_b_zoom["x_range"], data_a_b_zoom["e_range"], data_a_b_zoom["diff_cond"]
 
 #################### Plot Asymmetric differential conductances:
 fig, ax, cbar = plot_pcolormesh_4subplots_wzoom_a(\
@@ -59,7 +63,8 @@ fig, ax, cbar = plot_pcolormesh_4subplots_wzoom_a(\
                         colormap_log=[True, 0.0001])
 
 ft = "pdf"
-fig.savefig("figures/" + filepath + "/thesis_plots_Anna" + "/fig_" + filename_a + "." + ft, format=ft, dpi=300)
+fig.savefig("figures/" + filepath + "/thesis_plots_Anna" + "/fig_" \
+                                + filename_a + "." + ft, format=ft, dpi=300)
 fig.show()
 #################################################################
 
@@ -82,8 +87,10 @@ data_b =np.load(
 
 filepath_mu = (filepath + "/Psi_components_vs_mu")
 filepath_mu = ("../Jeroen tight binding code/data/")
-filepath_mu = "wire_101/sites=100/length=1.5/alpha=0.280204287582202eVA/Delta_ind=180" + "/Psi_components_vs_mu/"
-filepath_mu = "wire_101/sites=200/length=1.5/alpha=0.280204287582202eVA/Delta_ind=180" + "/Psi_components_vs_mu/"
+filepath_mu = "wire_101/sites=100/length=1.5/alpha=0.280204287582202eVA/Delta_ind=180" \
+                                        + "/Psi_components_vs_mu/"
+filepath_mu = "wire_101/sites=200/length=1.5/alpha=0.280204287582202eVA/Delta_ind=180" \
+                                        + "/Psi_components_vs_mu/"
 
 
 filename_mu = "Psi_=mu_in_-150-150_B=400 (another copy)" # old domain, far inside top region
@@ -102,7 +109,8 @@ b = data_b["var_range"]
 wf_b = data_b["psi_components"]
 E0_b = data_b["energies"][:,0]
 
-# Regions of well-behaved energy (used to plot gray box over areas where level-crossings have occured) : 
+# Regions of well-behaved energy 
+# (level-crossings, with not-near zero energy modes, have not occured inside said regions) : 
 b_domain = 500
 b_domain_2 = 975
 mu_domain_2 = 792 
@@ -116,9 +124,17 @@ mu_domain = 317
  Before : one of the energies is always positive, the other always negative. 
  After : two energies what moth oscillate, out of phase, around zero energy) 
 """
-E0_mu, Em0_mu, wf_mu[:,:,:,0], wf_mu[:,:,:,1] = calc_E1_Em1_from_E0_E0prime_var(E0_mu[:], data_mu["energies"][:,1][:],mu[:], evecs = [wf_mu[:,:,:,0], wf_mu[:,:,:,1]])
+E0_mu, Em0_mu, wf_mu[:,:,:,0], wf_mu[:,:,:,1] = \
+                                calc_E1_Em1_from_E0_E0prime_var(
+                                        E0_mu[:],
+                                        data_mu["energies"][:,1][:],mu[:], 
+                                        evecs = [wf_mu[:,:,:,0], wf_mu[:,:,:,1]])
 
-E0_b, Em0_b, wf_b[:,:,:,0], wf_b[:,:,:,1] = calc_E1_Em1_from_E0_E0prime_var(E0_b[:], data_b["energies"][:,1][:],b[:], evecs= [wf_b[:,:,:,0], wf_b[:,:,:,1]])
+E0_b, Em0_b, wf_b[:,:,:,0], wf_b[:,:,:,1] = \
+                                calc_E1_Em1_from_E0_E0prime_var(
+                                        E0_b[:], 
+                                        data_b["energies"][:,1][:],b[:], 
+                                        evecs= [wf_b[:,:,:,0], wf_b[:,:,:,1]])
 
 """
 Calculating the derivative of the lowest eigenenergies : 
@@ -136,13 +152,21 @@ q_Em0_R_b, n_Em0_R_b, q_Em0_L_b, n_Em0_L_b, Q_Em0_R_b, Q_Em0_L_b = calc_QLR(wf_b
 
 
 """
-Calculating the shift between integrated and local charges (used to estimate how localized the wavefunction may be, away from the ends of the wire) : 
+Calculating the shift between integrated and local charges 
+(used to estimate how localized the wavefunction may be, away from the ends of the wire) : 
 """
 QR_mu_i, dEdmu_i, ph_mu_i,\
-QR_b_i, dEdb_i, ph_b_i = calc_Q_dE_mu_b_phase_shift(mu[mu_domain:mu_domain_2], b[b_domain:b_domain_2], Q_E0_R_mu[mu_domain:mu_domain_2], dEdmu[mu_domain:mu_domain_2], Q_E0_R_b[b_domain:b_domain_2], dEdb[b_domain:b_domain_2])
+QR_b_i, dEdb_i, ph_b_i = calc_Q_dE_mu_b_phase_shift(
+                                mu[mu_domain:mu_domain_2], 
+                                b[b_domain:b_domain_2], 
+                                Q_E0_R_mu[mu_domain:mu_domain_2], 
+                                dEdmu[mu_domain:mu_domain_2], 
+                                Q_E0_R_b[b_domain:b_domain_2], 
+                                dEdb[b_domain:b_domain_2])
 
 """
-Loading the effective topological gap, calculated from an infinite Oreg-Lutchyn wire with the same parameters as in this modes : 
+Loading the effective topological gap, 
+calculated from an infinite Oreg-Lutchyn wire with the same parameters as in this modes : 
 """
 Dtop_mu_data = np.load("Anna thesis plots/Dtop_mu_1.npz")
 Dtop_b_data = np.load("Anna thesis plots/Dtop_b_1.npz")
@@ -153,20 +177,27 @@ Plotting the probability density, spin polarization, and the charge, as function
         lambda = chemical potential, or magnetic field, on the x-axis, and
         sites (real space) on the y-axis. 
 """
-fig, ax, fig_spin, fig_Q, wf2_P_l_A_L_mu_b, spin_P_l_A_L_mu_b, Q_P_l_A_L_mu_b = calc_plot_wf2_vs_var_and_site(   
-                                    mu = data_mu["var_range"],
-                                    wf_mu = wf_mu,
-                                    b = data_b["var_range"], 
-                                    wf_b = wf_b,
+fig, ax, fig_spin, fig_Q, wf2_P_l_A_L_mu_b, spin_P_l_A_L_mu_b, Q_P_l_A_L_mu_b \
+                                = calc_plot_wf2_vs_var_and_site(   
+                                    mu = 			data_mu["var_range"],
+                                    wf_mu = 		wf_mu,
+                                    b = 			data_b["var_range"], 
+                                    wf_b = 			wf_b,
                                     phase_data=[    False,
                                                     (QR_mu_i+(dEdmu_i))/2., ph_mu_i,
                                                     (QR_b_i+(dEdb_i))/2., ph_b_i
                                                 ],
-                                    Q_realspace=[True,dEdmu,dEdb],
-                                    Dtop2 = [True,  Dtop_mu_data["var_range"], Dtop_mu_data["D_top"] ,\
-                                                    Dtop_b_data["var_range"], Dtop_b_data["D_top"]],
+                                    Q_realspace=[	True,
+													dEdmu,
+													dEdb
+												],
+                                    Dtop2 = [		True,  
+													Dtop_mu_data["var_range"], 
+													Dtop_mu_data["D_top"] ,\
+                                                    Dtop_b_data["var_range"], 
+													Dtop_b_data["D_top"]
+											],
                                     level_cross_mu = [True,409,'gray'] )
-
 
 
 ########        PLOTTING TRACES 
@@ -174,7 +205,6 @@ fig, ax, fig_spin, fig_Q, wf2_P_l_A_L_mu_b, spin_P_l_A_L_mu_b, Q_P_l_A_L_mu_b = 
 var = "mu"
 var_2 = "b"
 filepath = "wire_101/sites=800/length=1.5/alpha=0.280204287582202eVA/Delta_ind=180"
-
 
 # plot gs, ga (traced), E0; QR, dE, gS/gA:
 filepath_b = (filepath + "/Psi_components_vs_b")
@@ -230,7 +260,8 @@ ax[0,0].annotate(r'$\triangle\hspace{5pt}$',
 filename_a = "E0_gS_gA_and_QR_dE0_gSovergA_4subplots"
 print(" - Filepath where conductance trace plot is saved : ", filepath)
 ft = "pdf"
-fig.savefig("figures/" + filepath + "/thesis_plots_Anna" + "/fig_" + filename_a + "." + ft, format=ft, dpi=300)
+fig.savefig("figures/" + filepath + "/thesis_plots_Anna" + "/fig_" \
+                                + filename_a + "." + ft, format=ft, dpi=300)
 fig.show()
 
 
@@ -260,15 +291,18 @@ fig.show()
 
 """ The shifts (on the x-axis) of integrated versus end charges, saved as a numpy zip file : """
 np.savez("figures/" + filepath + "/thesis_plots_Anna" + "/data_phaseshifts" + ".npz", 
-                phase_shifts_mu=data_phaseshifts[0], phase_shifts_b=data_phaseshifts[1], 
-                QR_mu_zeros_and_extrema=data_phaseshifts[2], dEdmu_zeros_and_extrema=data_phaseshifts[3], 
-                QR_b_zeros_and_extrema=data_phaseshifts[4], dEdb_zeros_and_extrema=data_phaseshifts[5])
+                phase_shifts_mu=data_phaseshifts[0], 
+                phase_shifts_b=data_phaseshifts[1], 
+                QR_mu_zeros_and_extrema=data_phaseshifts[2], 
+                dEdmu_zeros_and_extrema=data_phaseshifts[3], 
+                QR_b_zeros_and_extrema=data_phaseshifts[4], 
+                dEdb_zeros_and_extrema=data_phaseshifts[5])
 
 ### SHOWING A LINE-CUT IN THE TRIVIAL REGION TO INVESTIGATE FOURIER SPECTRUM OF THE SIGNAL : ###
 wf2_E0_mu_sum, wf2_E0_b_sum, spinpol_E0_mu, spinpol_E0_b, \
                                 u2_up_mu, u2_down_mu, v2_up_mu, v2_down_mu, u2_up_b, \
-                                u2_down_b, v2_up_b, v2_down_b
-                                = calc_wf_data(wf_mu, wf_b)
+                                u2_down_b, v2_up_b, v2_down_b \
+                                                = calc_wf_data(wf_mu, wf_b)
 
 Q_E0_mu = u2_up_mu + u2_down_mu - v2_up_mu - v2_down_mu
 Q_E0_b = u2_up_b + u2_down_b - v2_up_b - v2_down_b
@@ -280,6 +314,22 @@ Pl_mu_wf2, Pl_b_wf2 = wf2_P_l_A_L_mu_b[0], wf2_P_l_A_L_mu_b[1]
 Pl_mu_spin, Pl_b_spin = spin_P_l_A_L_mu_b[0], spin_P_l_A_L_mu_b[1]
 Pl_mu_Q, Pl_b_Q = Q_P_l_A_L_mu_b[0], Q_P_l_A_L_mu_b[1]
 
-plot_Pl_and_cut_wf_spinpol_Q(wf2_E0_mu_sum, spinpol_E0_mu, Q_E0_mu, Pl_mu_wf2, Pl_mu_spin, Pl_mu_Q, cut_idx = cut_idx)
-plot_Pl_and_cut_wf_spinpol_Q(wf2_E0_b_sum, spinpol_E0_b, Q_E0_b, Pl_b_wf2, Pl_b_spin, Pl_b_Q, cut_idx = cut_idx1)
+plot_Pl_and_cut_wf_spinpol_Q(
+                                wf2_E0_mu_sum, 
+                                spinpol_E0_mu, 
+                                Q_E0_mu, 
+                                Pl_mu_wf2, 
+                                Pl_mu_spin, 
+                                Pl_mu_Q, 
+                                cut_idx = cut_idx)
+
+plot_Pl_and_cut_wf_spinpol_Q(
+                                wf2_E0_b_sum, 
+                                spinpol_E0_b, 
+                                Q_E0_b, 
+                                Pl_b_wf2, 
+                                Pl_b_spin, 
+                                Pl_b_Q, 
+                                cut_idx = cut_idx1)
+
 
