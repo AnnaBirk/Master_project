@@ -64,18 +64,18 @@ To generate the data from scratch :
         Output :     Looping over the symmetric and asymmetric device, it will show and save a plot when the diagonalization of each one is done.
 
         To change the resolution/values of fields, E_Z, looped over:
-                change line 192 in the function "main()".
+                change line 281 in the function "main()".
         
         To change the system parameters : 
                 change the "par" object. The essential parameters are given in
-                    line 226
+                    line 323
                 where "par" is initially defined.
                 
-                the effective mass of the superconductor, m_star, is defined in 
-                    line 238.
+                the effective mass of the semiconductor, m_star, is defined in 
+                    line 339.
 
         To change the system aspect ratio : 
-                change line 234. The number dividing "par.Nx" gives the aspect ratio
+                change line 336. The number dividing "par.Nx" gives the aspect ratio
                     aspect_ratio = par.Nx/par.Ny.
 
 ### Chapters 8 and 9

@@ -336,10 +336,10 @@ for par.Nx in [120, 260]:
 	par.Ny = int(round(float(par.Nx/1.625)))
 	par.ax = float(par.LM+par.LL+par.LR)/par.Nx
 	par.ay = float(par.LY)/par.Ny
+	par.m_star = 0.023*const.m_e/(const.c)**2
 	par.tx = const.hbar**2/(2*0.023*const.m_e/(const.c)**2*par.ax**2)
 					# [t]=meV(=(meV*s)^2/(meV/(nm/s)^2*nm^2))
 	par.ty = const.hbar**2/(2*par.m_star*par.ay**2)
-	par.m_star = 0.023*const.m_e/(const.c)**2
 	# Left and Middle regions (defined by the following domains along the x-axis) :
 	par.left = np.arange(0, round(float(par.LL)/par.ax))
 	par.middle = np.arange(round(float(par.LL)/par.ax),
@@ -350,7 +350,7 @@ for par.Nx in [120, 260]:
 		print("Nx=%s, Ny=%.0f; ax=%g, ay=%g" % (par.Nx, par.Ny, par.ax, par.ay))
 
 		main()
-		
+
 	counter_Hprint += 1
 
 print("Program finished %s" % str(datetime.datetime.now()))
