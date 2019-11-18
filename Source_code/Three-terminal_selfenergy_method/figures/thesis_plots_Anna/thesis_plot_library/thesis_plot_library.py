@@ -235,11 +235,8 @@ def plot_pcolormesh_4subplots_wzoom_a(  x1, y1, z1, x1_zoom, y1_zoom, z1_zoom,
     font_size = 8
     plt.rcParams.update({'font.size': font_size})    
 
-
     fig, ax = plt.subplots(nrows=2, ncols=2, gridspec_kw = {'height_ratios':[3.5, 2]})
     set_share_axes(ax[0:1,0:2],sharey=True)
-
-
 
     if colormap_limits[0]==True:
         z_min, z_max = colormap_limits[1], colormap_limits[2]
@@ -257,8 +254,6 @@ def plot_pcolormesh_4subplots_wzoom_a(  x1, y1, z1, x1_zoom, y1_zoom, z1_zoom,
         CF2 = ax[0,1].pcolormesh(x2, y2, z2, vmin=z_min2, vmax=z_max2, cmap=colormap_name, norm=SymLogNorm(colormap_log[1],vmin=z_min2,vmax=z_max2), rasterized=True)
     
         CF2_zoom = ax[1,1].pcolormesh(x2_zoom, y2_zoom, z2_zoom, vmin=z_min2, vmax=z_max2, cmap=colormap_name, norm=SymLogNorm(colormap_log_2_value,vmin=z_min2,vmax=z_max2), rasterized=True)
-    
-
     else:
         CF1 = ax[0,0].pcolormesh(x1, y1, z1, vmin=z_min, vmax=z_max, cmap=colormap_name, norm=MidpointNormalize(midpoint=colormap_norm[1]), rasterized=True)
 
@@ -267,7 +262,6 @@ def plot_pcolormesh_4subplots_wzoom_a(  x1, y1, z1, x1_zoom, y1_zoom, z1_zoom,
         CF2 = ax[0,1].pcolormesh(x2, y2, z2, vmin=z_min2, vmax=z_max2, cmap=colormap_name, norm=MidpointNormalize(midpoint=colormap_norm[1]), rasterized=True)
     
         CF2_zoom = ax[1,1].pcolormesh(x2_zoom, y2_zoom, z2_zoom, vmin=z_min2, vmax=z_max2, cmap=colormap_name, norm=MidpointNormalize(midpoint=colormap_norm[1]), rasterized=True)
-
 
     """ COLORBAR: One for upper panel, one for lower """
     cbar_len = 0.61 #0.77#0.654
@@ -278,10 +272,8 @@ def plot_pcolormesh_4subplots_wzoom_a(  x1, y1, z1, x1_zoom, y1_zoom, z1_zoom,
     ticks2 = [-0.1,-0.01,0,0.01,0.1]
     shifty = 0.02   # shift in lower panel to make space for xlabels in upper panels
 
-
     cbar1_ax = fig.add_axes([cbar_x1, cbar_y1, cbar_len, cbar_width])
     ticks1_ = [-0.1,-0.001,0,0.001,0.1]
-
 
     cbar1 = fig.colorbar(CF1, cax=cbar1_ax, orientation="horizontal", ticks=ticks1_)
 
@@ -299,12 +291,11 @@ def plot_pcolormesh_4subplots_wzoom_a(  x1, y1, z1, x1_zoom, y1_zoom, z1_zoom,
     ax[0,0].set_ylabel(r'$V\ [\mu eV]$', fontsize=font_size+2, va='center')
     ax[0,0].set_xlabel((r"$\mu\ [\mu eV]$"), fontsize=font_size+2)
     ax[0,1].set_xlabel(r"$V_Z\ [\mu eV]$", fontsize=font_size+2)
-    ax[0,0].set_yticks([-200,0,200]) # may 'decouple' from data/cause problems later. beware.
-    ax[0,1].set_yticks([-200,0,200])
-
     ax[1,0].set_ylabel(r'$V\ [\mu eV]$', fontsize=font_size+2, va='center')
     ax[1,0].set_xlabel((r"$\mu\ [\mu eV]$"), fontsize=font_size+2)
     ax[1,1].set_xlabel(r"$V_Z\ [\mu eV]$", fontsize=font_size+2)
+    ax[0,0].set_yticks([-200,0,200]) # may 'decouple' from data/cause problems later. beware.
+    ax[0,1].set_yticks([-200,0,200])
 
     for i in [0,1]:
         for j in [0,1]:
@@ -312,11 +303,8 @@ def plot_pcolormesh_4subplots_wzoom_a(  x1, y1, z1, x1_zoom, y1_zoom, z1_zoom,
 
     # fig.set_size_inches(3.39, 3.1)  # letter-size 
     fig.set_size_inches(4, 4)
-
     fig.subplots_adjust(wspace=0.23, hspace=0.55+\
                                                     8*shifty, bottom = 0.13, left = 0.14, right=0.97, top=0.90)
-
-
     return fig, ax, cbar1
 
 
