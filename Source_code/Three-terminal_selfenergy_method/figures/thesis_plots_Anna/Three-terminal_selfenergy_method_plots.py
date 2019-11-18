@@ -156,6 +156,7 @@ mu_domain = 317
 
 """ 
 'Cutting and pasting' lowest-energy modes 
+with the function calc_E1_Em1_from_E0_E0prime_var
 (Notes
  -----
  Before : one of the energies is always positive, the other always negative. 
@@ -179,7 +180,8 @@ Calculating the derivative of the lowest eigenenergies :
 dEdmu, dEdb = calc_dEdvar(mu[:],b[:],E0_mu,E0_b)
 
 """
-Calculating the end charges, q, end weights, n, and normalized end charges, Q :
+Calculating the end charges, q_L or q_R, end weights, n_L or n_R, 
+and normalized end charges, Q_L or Q_R :
 """
 q_E0_R_mu, n_E0_R_mu, q_E0_L_mu, n_E0_L_mu, Q_E0_R_mu, Q_E0_L_mu,\
 q_Em0_R_mu, n_Em0_R_mu, q_Em0_L_mu, n_Em0_L_mu, Q_Em0_R_mu, Q_Em0_L_mu = calc_QLR(wf_mu[:])
@@ -190,7 +192,8 @@ q_Em0_R_b, n_Em0_R_b, q_Em0_L_b, n_Em0_L_b, Q_Em0_R_b, Q_Em0_L_b = calc_QLR(wf_b
 
 """
 Calculating the shift between integrated and local charges 
-(used to estimate how localized the wavefunction may be, away from the ends of the wire) : 
+(used to estimate how localized the wavefunction may be, away from the ends of the wire.
+Not plotted in thesis) : 
 """
 QR_mu_i, dEdmu_i, ph_mu_i,\
 QR_b_i, dEdb_i, ph_b_i = calc_Q_dE_mu_b_phase_shift(
@@ -217,33 +220,32 @@ Plotting the
 """
 fig, ax, fig_spin, fig_Q, wf2_P_l_A_L_mu_b, spin_P_l_A_L_mu_b, Q_P_l_A_L_mu_b \
                                 = calc_plot_wf2_vs_var_and_site(   
-                                    mu = 			data_mu["var_range"],
-                                    wf_mu = 		wf_mu,
-                                    b = 			data_b["var_range"], 
-                                    wf_b = 			wf_b,
-                                    phase_data=[    False,
-                                                    (QR_mu_i+(dEdmu_i))/2., ph_mu_i,
-                                                    (QR_b_i+(dEdb_i))/2., ph_b_i
-                                                ],
-                                    Q_realspace=[	True,
+                                        mu = 		data_mu["var_range"],
+                                        wf_mu = 		wf_mu,
+                                        b = 		data_b["var_range"], 
+                                        wf_b = 		wf_b,
+                                        phase_data=[    False,
+                                                        (QR_mu_i+(dEdmu_i))/2., ph_mu_i,
+                                                        (QR_b_i+(dEdb_i))/2., ph_b_i
+                                                        ],
+                                        Q_realspace=[	True,
                                                         dEdmu,
                                                         dEdb
-                                                ],
-                                    Dtop2 = [		True,  
+                                                        ],
+                                        Dtop2 = [	True,  
                                                         Dtop_mu_data["var_range"], 
                                                         Dtop_mu_data["D_top"] ,\
                                                         Dtop_b_data["var_range"], 
                                                         Dtop_b_data["D_top"]
-                                                ],
-                                    level_cross_mu = [True,409,'gray'] )
+                                                        ],
+                                        level_cross_mu = [True,409,'gray'] )
 
 
 """             DIFFERENTIAL CONDUCTANCE SPECTROSCOPY
                         along the two lowest eigenenergies """
-                        
+# loading data, similarly to earlier :                         
 filepath_skeleton = "wire_101/sites=800/length=1.5/alpha=0.280204287582202eVA/Delta_ind=180"
 
-# plot gs, ga (traced), E0; QR, dE, gS/gA:
 filepath_b = (filepath_skeleton + "/Psi_components_vs_b")
 filename_b = "Psi_=b_in_200-800_gS_and_gA_line_E0_Q__tunnel_t=47118.61755164704 (another copy)"
 data_b =np.load(
@@ -255,7 +257,12 @@ filename_mu = "Psi_=mu_in_-150-150_B=400_gS_and_gA_line_E0_Q__tunnel_t=47118.617
 data_mu = np.load(
                  "data/" + filepath_mu + "/data_" + filename_mu + ".npz"
                  )
-fig,ax, data_phaseshifts = plot_E0_gS_gA_and_QR_dE0_gSovergA_4subplots(   
+# plotting traced symmetric (gS) and antisymmetric (gA) components of the nonlocal conductance (upper panel),
+# the energy E0 along which the trace has been performed,
+# the end charge at the right end, QR, 
+# the derivative of the eigenenergy,
+# and the charge probe, gS/gA : 
+fig, ax, data_phaseshifts = plot_E0_gS_gA_and_QR_dE0_gSovergA_4subplots(   
                                             mu = data_mu["x_range"],
                                             E0_mu = data_mu["E0"],
                                             gS_mu = data_mu["G_LR_S"],
@@ -274,9 +281,9 @@ OBSERVED IN THE ANTISYMMETRIC CONDUCTANCE
 (I.E. THE MAXIMA AND MINIMA OF THE CHARGE, 
 WHICH WE HAVE EASILY AVAILABLE FROM DATA_PHASESHIFTS) : 
 """
-QR_mu_zeros_and_extrema=data_phaseshifts[2]
-star_point = QR_mu_zeros_and_extrema[2]
-triangle_point = QR_mu_zeros_and_extrema[3]
+QR_mu_zeros_and_extrema = data_phaseshifts[2]
+star_point = QR_mu_zeros_and_extrema[2]         # x-value of a 'dip' in gA
+triangle_point = QR_mu_zeros_and_extrema[3]     # x-value of a zero energy crossing in gA
 
 ax[0,0].annotate(r'$\star$',
             xy=(star_point,-0.2),
@@ -302,30 +309,11 @@ fig.show()
 
 
 
+""" NOT INCLUDED IN THESIS : 
+plotting the phase function (P_l) which may be used to estimate the 'degree of localization' function (A_L),
+as well as Fourier-transforming the signals : """
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-##############################  NOT INCLUDED IN THESIS : #############################################
-
-
-""" The shifts (on the x-axis) of integrated versus end charges, saved as a numpy zip file : """
+# The shifts (on the x-axis) of integrated versus end charges, saved as a numpy zip file : 
 np.savez("figures/" + filepath_skeleton + "/thesis_plots_Anna" + "/data_phaseshifts" + ".npz", 
                 phase_shifts_mu=data_phaseshifts[0], 
                 phase_shifts_b=data_phaseshifts[1], 
@@ -339,16 +327,19 @@ wf2_E0_mu_sum, wf2_E0_b_sum, spinpol_E0_mu, spinpol_E0_b, \
                                 u2_up_mu, u2_down_mu, v2_up_mu, v2_down_mu, u2_up_b, \
                                 u2_down_b, v2_up_b, v2_down_b \
                                                 = calc_wf_data(wf_mu, wf_b)
-
+# Charges : 
 Q_E0_mu = u2_up_mu + u2_down_mu - v2_up_mu - v2_down_mu
 Q_E0_b = u2_up_b + u2_down_b - v2_up_b - v2_down_b
 
+# Choose an index to perform the line-cut in the desired signal 
+# (wavefunction, spin, or charge) : 
 cut_idx = 10    # index of mu for which to cut
 cut_idx1 = 10   # index of b for which to cut
 
-Pl_mu_wf2, Pl_b_wf2 = wf2_P_l_A_L_mu_b[0], wf2_P_l_A_L_mu_b[1]
-Pl_mu_spin, Pl_b_spin = spin_P_l_A_L_mu_b[0], spin_P_l_A_L_mu_b[1]
-Pl_mu_Q, Pl_b_Q = Q_P_l_A_L_mu_b[0], Q_P_l_A_L_mu_b[1]
+# Phase function for estimating 'degree of localization' in thesis : 
+Pl_mu_wf2, Pl_b_wf2     = wf2_P_l_A_L_mu_b[0], wf2_P_l_A_L_mu_b[1]
+Pl_mu_spin, Pl_b_spin   = spin_P_l_A_L_mu_b[0], spin_P_l_A_L_mu_b[1]
+Pl_mu_Q, Pl_b_Q         = Q_P_l_A_L_mu_b[0], Q_P_l_A_L_mu_b[1]
 
 plot_Pl_and_cut_wf_spinpol_Q(
                                 wf2_E0_mu_sum, 

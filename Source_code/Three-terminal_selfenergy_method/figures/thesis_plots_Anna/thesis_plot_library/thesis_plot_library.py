@@ -231,7 +231,6 @@ def plot_pcolormesh_4subplots_wzoom_a(  x1, y1, z1, x1_zoom, y1_zoom, z1_zoom,
                                         colormap_limits=[False,0,0], colormap_norm=[False,0], 
                                         colormap_name=None, colormap_log=[False,0], 
                                         colormap_ticks = [False,0], font_size=10):
-
     plt.rc('text', usetex=True)
     font_size = 8
     plt.rcParams.update({'font.size': font_size})    
@@ -277,6 +276,7 @@ def plot_pcolormesh_4subplots_wzoom_a(  x1, y1, z1, x1_zoom, y1_zoom, z1_zoom,
     cbar_y1 = 0.95
     ticks1 = [-0.1,-0.01,-0.001,0,0.01,0.001,0.1]
     ticks2 = [-0.1,-0.01,0,0.01,0.1]
+    shifty = 0.02   # shift in lower panel to make space for xlabels in upper panels
 
 
     cbar1_ax = fig.add_axes([cbar_x1, cbar_y1, cbar_len, cbar_width])
@@ -285,7 +285,8 @@ def plot_pcolormesh_4subplots_wzoom_a(  x1, y1, z1, x1_zoom, y1_zoom, z1_zoom,
 
     cbar1 = fig.colorbar(CF1, cax=cbar1_ax, orientation="horizontal", ticks=ticks1_)
 
-    cbar2_ax = fig.add_axes([cbar_x1, cbar_y1-0.54, cbar_len, cbar_width])
+    cbar2_ax = fig.add_axes([cbar_x1, cbar_y1-0.54\
+                                                    -0.8*shifty, cbar_len, cbar_width])
     cbar2 = fig.colorbar(CF1_zoom, cax=cbar2_ax, orientation="horizontal", ticks=ticks2)
     
     cbar1_ax.tick_params(direction='in')
@@ -296,6 +297,8 @@ def plot_pcolormesh_4subplots_wzoom_a(  x1, y1, z1, x1_zoom, y1_zoom, z1_zoom,
 
     """ AXES AND ADJUSTMENTS: """
     ax[0,0].set_ylabel(r'$V\ [\mu eV]$', fontsize=font_size+2, va='center')
+    ax[0,0].set_xlabel((r"$\mu\ [\mu eV]$"), fontsize=font_size+2)
+    ax[0,1].set_xlabel(r"$V_Z\ [\mu eV]$", fontsize=font_size+2)
     ax[0,0].set_yticks([-200,0,200]) # may 'decouple' from data/cause problems later. beware.
     ax[0,1].set_yticks([-200,0,200])
 
@@ -307,8 +310,11 @@ def plot_pcolormesh_4subplots_wzoom_a(  x1, y1, z1, x1_zoom, y1_zoom, z1_zoom,
         for j in [0,1]:
             ax[i,j].tick_params(direction='in')
 
-    fig.set_size_inches(3.39, 3.1)
-    fig.subplots_adjust(wspace=0.23, hspace=0.55, bottom = 0.13, left = 0.14, right=0.97)
+    # fig.set_size_inches(3.39, 3.1)  # letter-size 
+    fig.set_size_inches(4, 4)
+
+    fig.subplots_adjust(wspace=0.23, hspace=0.55+\
+                                                    8*shifty, bottom = 0.13, left = 0.14, right=0.97, top=0.90)
 
 
     return fig, ax, cbar1
