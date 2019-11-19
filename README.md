@@ -105,13 +105,13 @@ To generate these figures, run the script :
 
     Source_code/Three-terminal_selfenergy_method/figures/thesis_plots_Anna/Three-terminal_selfenergy_method_plots.py
 
-This script makes use of the following library and data :
+This script makes use of the following module and data :
 
     The data used in the thesis are given in : 
 
             "Source_code/Three-terminal_selfenergy_method/figures/thesis_plots_Anna/data/wire_101"
 
-    One library I wrote, which is used to process the raw data (differential conductances), and to represent the data as done in the figures at hand, is given in : 
+    One module I wrote, which is used to process the raw data (differential conductances), and to represent the data as done in the figures at hand, is given in : 
 
             "Source_code/Three-terminal_selfenergy_method/thesis_plot_library/thesis_plot_library.py"
 
@@ -160,4 +160,4 @@ This script generates several figures:
 
 The corresponding arrays containing the data for the conductances :
 
-    The names are identical, except for the file-type. Substitute ".pdf" for ".npy" in the above.
+    The names are identical, except for the file-type. Substitute ".pdf" for ".npy" in the above figure names.

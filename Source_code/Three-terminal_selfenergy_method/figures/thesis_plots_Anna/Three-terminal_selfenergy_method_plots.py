@@ -358,5 +358,3 @@ plot_Pl_and_cut_wf_spinpol_Q(
                                 Pl_b_spin, 
                                 Pl_b_Q, 
                                 cut_idx = cut_idx1)
-
-
