@@ -1,3 +1,20 @@
+"""
+With this program, the Kwant package is used to build a system graph.
+After finalizing the system, the eigenenergies and eigenvectors can
+be determined. If the user chooses to attach leads to the system, the
+local and possibly the nonlocal differential conductances can be 
+calculated. This is done by using Kwant to solve the scattering problem
+at the interface between system and leads, from which the scattering
+matrix is determined (see the Kwant paper for details). The differential
+conductances and their symmetry decomposed partners are then determined
+and can be represented in contour plots. The user can also specify an
+index in the independent variable for which to plot a line-cut of the
+conductance signal. With such a representation, it becomes clear that
+the symmetry relation 
+	(nonlocal antisymmetric conductance) = - (local antisymmetric conductance)
+found in arXiv:1905.05438, is a mathematical property of the three-terminal 
+device discussed in the paper.
+"""
 import kwant
 import datetime
 import time
@@ -43,7 +60,7 @@ def main_En_gG12A(ppar):
 	 - filename: REMEMBER to update the filename if new parameters are introduced or similarly. 
 	                If not, writing files will overwrite old ones, and reading files, you might read the wrong file.
 	"""	
-	
+
 	""" Creating a filename based on the rules specified in the following function : """
 	misc.set_filename_skeleton(par, ppar)	
 	""" 'Building' system, using the Kwant package : 
@@ -192,24 +209,39 @@ def main_En_gG12A(ppar):
 
 	""" mu_cut_index is the index in the chemical potential variable (mu), 
 	where the user chooses to make a line-cut. This cut is then plotted 
-	as a function of the biasenergy. """	
+	as a function of the biasenergy in the following. """	
 	G_full_absmax = np.max(
 		np.abs(par.G_11_mu[ppar.mu_cut_index, :], par.G_12_mu[ppar.mu_cut_index, :]))	
-	plot.plot_G_1_G_2_varconst(par, G_1=par.G_11_mu, G_2=par.G_12_S_mu+par.G_12_A_mu, index_of_varconst=ppar.mu_cut_index, filename="G_11_12_mu_0_vs_bias"+ppar.filename, figtitle=" ",
-								xlabel=r"$V\ [meV]$", ylabel=r"$G_{\alpha \beta}^0(V)\ [e^2/h]$", legend=[r"$G_{LL}^0$", r"$G_{LR}^0$"], ylim=[-1.1*G_full_absmax, 1.1*G_full_absmax], colors=['--k', "C0"])	
-	plot.plot_G_1_G_2_varconst(par,
-								G_1=par.G_12_S_mu, G_2=par.G_12_A_mu,
-								G_3=par.G_11_S_mu, G_4=par.G_11_A_mu,
-								index_of_varconst=ppar.mu_cut_index, filename="G_11_12_A_S_mu_0_vs_bias", figtitle=" ", xlabel=r"$V\ [meV]$", ylabel=r"$G_{\alpha \beta}^{0,sym/asym}(V)\ [e^2/h]$",
-								legend=[r"$G_{LR}^{0,sym}$", r"$G_{LR}^{0,asym}$", r"$G_{LL}^{0,sym}$", r"$G_{LL}^{0,asym}$"], ylim=[-1.1*G_full_absmax, 1.1*G_full_absmax], colors=['C1', "C0", "k", "gray"]
+	# Line-cut plot of the total local and total nonlocal conductances : 
+	plot.plot_G_1_G_2_varconst(	par, 
+								G_1=par.G_11_mu, 				# total local cond.
+								G_2=par.G_12_S_mu+par.G_12_A_mu,# total nonlocal cond.
+								index_of_varconst=ppar.mu_cut_index,
+								filename="G_11_12_mu_0_vs_bias"+ppar.filename, 
+								figtitle=" ",
+								xlabel=r"$V\ [meV]$", 			# bias axis
+								ylabel=r"$G_{\alpha \beta}^0(V)\ [e^2/h]$", 
+								legend=[r"$G_{LL}^0$", r"$G_{LR}^0$"], 
+								ylim=[-1.1*G_full_absmax, 1.1*G_full_absmax], 
+								colors=['--k', "C0"]
 								)	
-	#############################
-	# MAY ALSO BE USED : plotting map of normalized charge in real space. Please also consider NOTE [*1].
-	# par.normalization_allsites = par.u2_mu_sites_1+par.v2_mu_sites_1
-	# par.u2mv2_allsites = (par.u2_mu_sites_1-par.v2_mu_sites_1)/par.normalization_allsites	
-	# plot.plot_map(par.u2mv2_allsites,par.mu_values_2,np.arange(0,par.Ny),"u2mv2_mu_i_"+ppar.filename_2+".pdf","$(u^2_1-v^2_1)/(u^2_1+v^2_1)$","$\mu\ [meV]$", "$site$","seismic",(4, 4))	
-	# plot.plot_map(par.u2mv2_allsites[:,:int(round(par.Ny))],par.mu_values_2[:],np.arange(0,int(round(par.Ny))),"u2mv2_mu_i_"+ppar.filename_2+"_zoom_saturated.pdf","$(u^2_1-v^2_1)/(u^2_1+v^2_1)$","$\mu\ [meV]$", "$site$","seismic",figsize_inches = (4, 4),vmin_max=(-1,1))#,add_vlines=(0.707,0.711,0.720,0.724,0.768,0.772))
-	#############################
+	# Line-cut plot of the symmetry-decomposed differential conductances :
+	plot.plot_G_1_G_2_varconst(par,
+								G_1=par.G_12_S_mu, # nonlocal symmetric
+								G_2=par.G_12_A_mu, # nonlocal antisymmetric
+								G_3=par.G_11_S_mu, # local symmetric
+								G_4=par.G_11_A_mu, # local antisymmetric
+								index_of_varconst=ppar.mu_cut_index, 
+								filename="G_11_12_A_S_mu_0_vs_bias", 
+								figtitle=" ", 
+								xlabel=r"$V\ [meV]$", 
+								ylabel=r"$G_{\alpha \beta}^{0,sym/asym}(V)\ [e^2/h]$",
+								legend=[r"$G_{LR}^{0,sym}$", r"$G_{LR}^{0,asym}$", \
+											r"$G_{LL}^{0,sym}$", r"$G_{LL}^{0,asym}$"], 
+								ylim=[-1.1*G_full_absmax, 1.1*G_full_absmax], 
+								colors=['C1', "C0", "k", "gray"]
+								)	
+
 
 ###
 
