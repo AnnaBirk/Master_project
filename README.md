@@ -61,7 +61,8 @@ To generate the data from scratch :
 
         Run :         Source_code/Hell_2D_platform_paper/2D_platform_diagonalization.py
         
-        Output :     Looping over the symmetric and asymmetric device, it will show and save a plot when the diagonalization of each one is done.
+        Output :     Looping over the symmetric and asymmetric device, it will show 
+        and save a plot when the diagonalization of each one is done.
 
         To change the resolution/values of fields, E_Z, looped over:
                 change line 281 in the function "main()".
@@ -103,7 +104,8 @@ Please see his PhD thesis for further details about the kinds of calculations he
 
 To generate these figures, run the script :
 
-    Source_code/Three-terminal_selfenergy_method/figures/thesis_plots_Anna/Three-terminal_selfenergy_method_plots.py
+    Source_code/Three-terminal_selfenergy_method/figures/thesis_plots_Anna/
+    Three-terminal_selfenergy_method_plots.py
 
 This script makes use of the following module and data :
 
@@ -111,11 +113,14 @@ This script makes use of the following module and data :
 
             "Source_code/Three-terminal_selfenergy_method/figures/thesis_plots_Anna/data/wire_101"
 
-    One module I wrote, which is used to process the raw data (differential conductances), and to represent the data as done in the figures at hand, is given in : 
+    One module I wrote, which is used to process the raw data (differential 
+    conductances), and to represent the data as done in the figures at hand, is
+    given in : 
 
             "Source_code/Three-terminal_selfenergy_method/thesis_plot_library/thesis_plot_library.py"
 
-    Arrays containing the effective topological gap, plotted in figure 9.2, is given in :
+    Arrays containing the effective topological gap, plotted in figure 9.2, 
+    is given in :
 
             "Source_code/Three-terminal_selfenergy_method/Anna\ thesis\ plots/Dtop_mu_1.npz"
             "Source_code/Three-terminal_selfenergy_method/Anna\ thesis\ plots/Dtop_b_1.npz"
@@ -124,7 +129,8 @@ This script makes use of the following module and data :
 
 #### Figure 8.5 - Line-cut of the in-gap conductance calculated for the same system as in the main results, but now using Kwant
 
-The discretization is chosen differently, partially due to computational cost, but also because the point in this figure was to demonstrate
+The discretization is chosen differently, partially due to computational cost, 
+but also because the point in this figure was to demonstrate
 
     G_LR^asym(V) = G_LL^asym(V)
 
@@ -154,9 +160,14 @@ This script generates several figures:
     G_12_A_vsEbias1mu_Nx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1__SymLogNorm.pdf
                      - antisymmetric component of nonlocal conductance
     G_11_12_mu_0_vs_biasNx1_Ny60_LM0_LL25_LR0_LY1500_ax25_ay25_mu-0.6_Gamma0.18_pL0_pR0_k30_biE-0.25_0.25_Ez0.8_0.8_mu-0.6_0.6_biEres1001_Ezres1_mures1001_pinchcoef3_tsys2.65042_tLeads1_.pdf
-                     - line-cut in the total local and the total nonlocal differential conductances, at a chemical potential of 0.8 meV (the 667'th element of the 1001 long chemical potential-axis, in this particular example data). 
+                     - line-cut in the total local and the total nonlocal 
+                     differential conductances, at a chemical potential of 0.8 meV 
+                     (the 667'th element of the 1001 long chemical potential-axis, 
+                     in this particular example data). 
     G_11_12_A_S_mu_0_vs_bias.pdf
-                     - line-cut of the symmetry-decomposed local and nonlocal differential conductances. Zooming in around zero bias in this plot, you get figure 8.5.
+                     - line-cut of the symmetry-decomposed local and nonlocal 
+                     differential conductances. Zooming in around zero bias in this 
+                     plot, you get figure 8.5.
 
 The corresponding arrays containing the data for the conductances :
 
