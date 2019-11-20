@@ -160,12 +160,24 @@ This script generates several figures:
 
 The corresponding arrays containing the data for the conductances :
 
-    The names are identical, except for the file-type. Substitute ".pdf" for ".npy" in the above figure names.
+    The names are identical, except for the file-type. 
+    Substitute ".pdf" for ".npy" in the above figure names.
 
 To calculate the differential conductance from scratch :
 
-    Change generating_G_11_12_S_A_var=[False, True] to generating_G_11_12_S_A_var=[True, True] in "expsys_v16_web02.py".
+    Change 
+    generating_G_11_12_S_A_var=[False, True] to 
+    generating_G_11_12_S_A_var=[True, True] 
+    in "expsys_v16_web02.py".
 
 To change system parameters and for instance domains and resolutions in variables :
 
-    Change parameters contained in the SimpleNamespace object par. These parameters are specified in the file "set_params.set_params.py". See that file for details about the different parameters, and how they are specified in order for the program to run correctly.
+    Change parameters contained in the SimpleNamespace object par. 
+    These parameters are specified in the file "set_params.set_params.py". 
+    See that file for details about the different parameters, and how 
+    they are specified in order for the program to run correctly.
+
+To change the type of system that is built using Kwant :
+
+    Change the ppar object in "expsys_v16_web02.py", 
+    according to the rules given in "set_params.set_params.py".
