@@ -33,6 +33,11 @@ Notes
 ppar : 			
 	Simplenamespace object containing "program specific parameters". 
 	Sorted into three categories, (i), (ii), and (iii).
+    
+    Notes
+    -----
+        A selection of parameters contained in these are given below. 
+        Please see comments thoughout this script for more details.
 
 	(i) The closed system type / geometry :
 	--------------------------------------
@@ -90,8 +95,6 @@ ppar :
 									Numerical value of the constant.
 
 """
-
-
 
 
 import numpy as np
@@ -475,5 +478,5 @@ def set_params(ppar):
 
     ###
 
-    
+
     return const, par, ppar
