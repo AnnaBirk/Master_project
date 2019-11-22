@@ -3,7 +3,7 @@
 This script specifies program specific parameters /
 what the program will do (ppar), 
 physical parameters (par), and physical constants (const).
-ppar, par, and const are SimpleNamespace objects.
+ppar, par, and const are SimpleNamespace objects. [*]
 
 """
 
@@ -37,7 +37,7 @@ ppar :
     Notes
     -----
         A selection of parameters contained in these are given below. 
-        Please see comments thoughout this script for more details.
+        [*] Please see comments thoughout this script for more details.
 
 	(i) The closed system type / geometry :
 	--------------------------------------
