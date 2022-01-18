@@ -1,8 +1,29 @@
-# Python and Mathematica scripts used in Master thesis
+# Scripts used in master thesis
 
 [![DOI](https://zenodo.org/badge/192598166.svg)](https://zenodo.org/badge/latestdoi/192598166)
 
-## Thesis title: Local and nonlocal differential conductance spectroscopy of Andreev bound states in three-terminal superconducting devices
+Author: Anna Birk Hellenes
+
+Thesis title: Local and nonlocal differential conductance spectroscopy of Andreev bound states in three-terminal superconducting devices
+
+The thesis is available upon personal request by [email](mailto:ahellene@uni-mainz.de). 
+
+This repository contains python and mathematica scripts that reproduce figures and equations in the thesis.
+
+## Citation
+The thesis and the scripts in this repository largely focuses on the findings in the following paper:
+
+#
+##### Physical Review Letters 124, 036801 (2020)
+##### "Nonlocal Conductance Spectroscopy of Andreev Bound States: Symmetry Relations and BCS Charges". Jeroen Danon, Anna Birk Hellenes, Esben Bork Hansen, Lucas Casparis, Andrew P. Higginbotham, and Karsten Flensberg.
+#
+
+Please cite this paper according to the international codes of conduct for research integrity.
+
+## Acknowledgements
+I want to acknowledge the supervision from Karsten Flensberg during the thesis, all the collaborators on the paper, and the condensed matter theory research group at the Niels Bohr institute.
+
+## How to reproduce the thesis results
 
 ### Chapter 3
 
@@ -84,7 +105,10 @@ To generate the data from scratch :
 #### Equations (8.26)-(8.29)
 
 Run the Mathematica stript
-    "Source_code/Single_Andreev_level_analytical/S-matrix_one-level_approximation_web.nb"
+    "Source_code/Single_Andreev_level_analytical/S-matrix_one-level_approximation_web.nb".
+This script mainly manipulates the formulas.
+
+I want to acknowledge that Karsten Flensberg and Jeroen Danon were the first to derive these equations, which are also given in the paper. 
 
 #### Figures
 
