@@ -18,7 +18,7 @@ The thesis and the scripts in this repository largely focuses on the findings in
 ##### "Nonlocal Conductance Spectroscopy of Andreev Bound States: Symmetry Relations and BCS Charges". Jeroen Danon, Anna Birk Hellenes, Esben Bork Hansen, Lucas Casparis, Andrew P. Higginbotham, and Karsten Flensberg.
 #
 
-Please cite this paper according to the international codes of conduct for research integrity.
+Please cite this paper according to the international codes of conduct for research integrity. To cite this repository, use the DOI above.
 
 ## Acknowledgements
 I want to acknowledge the supervision from Karsten Flensberg during the thesis, all the collaborators on the paper, and the condensed matter theory research group at the Niels Bohr institute.
